@@ -51,68 +51,73 @@ export const CaniCoachLogo: React.FC<IconProps> = ({ className = '', size = 24 }
   <svg 
     width={size} 
     height={size} 
-    viewBox="0 0 40 40" 
+    viewBox="0 0 32 32" 
     fill="none" 
     className={className}
   >
-    {/* Chien sportif moderne */}
-    <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.1"/>
+    {/* Chien réaliste moderne */}
+    <circle cx="16" cy="16" r="15" fill="url(#logoGradient)" opacity="0.08"/>
     
-    {/* Casquette sportive */}
-    <path d="M8 14C8 10 12 8 20 8C28 8 32 10 32 14V16H8V14Z" fill="currentColor" opacity="0.9"/>
-    <ellipse cx="20" cy="8" rx="14" ry="4" fill="currentColor" opacity="0.7"/>
-    <path d="M6 16C6 15 7 14 8 14H32C33 14 34 15 34 16C34 17 33 18 32 18H8C7 18 6 17 6 16Z" fill="currentColor" opacity="0.8"/>
-    
-    {/* Tête de chien athlétique */}
-    <ellipse cx="20" cy="18" rx="11" ry="9" fill="currentColor" opacity="0.15"/>
+    {/* Tête de chien réaliste */}
+    <ellipse cx="16" cy="14" rx="8" ry="7" fill="currentColor" opacity="0.15"/>
     <path 
-      d="M20 10C25 10 29 12 29 16C29 19 28 21 26 23L24 25C23.2 25.8 22.8 25.8 22 25L20 22L18 25C17.2 25.8 16.8 25.8 16 25L14 23C12 21 11 19 11 16C11 12 15 10 20 10Z" 
+      d="M16 8C20.5 8 24 10.5 24 14C24 16.5 23 18.5 21.5 20L20 21.5C19.5 22 19 22 18.5 21.5L16 18.5L13.5 21.5C13 22 12.5 22 12 21.5L10.5 20C9 18.5 8 16.5 8 14C8 10.5 11.5 8 16 8Z" 
       fill="currentColor"
     />
     
-    {/* Oreilles dressées d'athlète */}
-    <ellipse cx="13" cy="13" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(-20 13 13)"/>
-    <ellipse cx="27" cy="13" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(20 27 13)"/>
-    {/* Intérieur des oreilles */}
-    <ellipse cx="13.5" cy="13.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(-20 13.5 13.5)"/>
-    <ellipse cx="26.5" cy="13.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(20 26.5 13.5)"/>
+    {/* Oreilles tombantes réalistes */}
+    <ellipse cx="11" cy="11" rx="2.5" ry="4.5" fill="currentColor" opacity="0.95" transform="rotate(-25 11 11)"/>
+    <ellipse cx="21" cy="11" rx="2.5" ry="4.5" fill="currentColor" opacity="0.95" transform="rotate(25 21 11)"/>
+    {/* Intérieur des oreilles rose */}
+    <ellipse cx="11.5" cy="11.5" rx="1.2" ry="2.8" fill="#ff9999" opacity="0.7" transform="rotate(-25 11.5 11.5)"/>
+    <ellipse cx="20.5" cy="11.5" rx="1.2" ry="2.8" fill="#ff9999" opacity="0.7" transform="rotate(25 20.5 11.5)"/>
     
-    {/* Yeux déterminés de champion */}
-    <circle cx="16" cy="17" r="2" fill="white"/>
-    <circle cx="24" cy="17" r="2" fill="white"/>
-    <circle cx="16" cy="17" r="1.2" fill="currentColor"/>
-    <circle cx="24" cy="17" r="1.2" fill="currentColor"/>
-    {/* Reflets déterminés */}
-    <circle cx="16.5" cy="16.5" r="0.5" fill="white"/>
-    <circle cx="24.5" cy="16.5" r="0.5" fill="white"/>
+    {/* Yeux expressifs et réalistes */}
+    <ellipse cx="13" cy="13.5" rx="1.8" ry="2.2" fill="white"/>
+    <ellipse cx="19" cy="13.5" rx="1.8" ry="2.2" fill="white"/>
+    {/* Pupilles noires */}
+    <ellipse cx="13" cy="14" rx="1.2" ry="1.5" fill="currentColor"/>
+    <ellipse cx="19" cy="14" rx="1.2" ry="1.5" fill="currentColor"/>
+    {/* Reflets dans les yeux */}
+    <ellipse cx="13.5" cy="13.2" rx="0.4" ry="0.6" fill="white"/>
+    <ellipse cx="19.5" cy="13.2" rx="0.4" ry="0.6" fill="white"/>
+    {/* Petits reflets secondaires */}
+    <circle cx="12.7" cy="14.5" r="0.2" fill="white" opacity="0.8"/>
+    <circle cx="18.7" cy="14.5" r="0.2" fill="white" opacity="0.8"/>
     
-    {/* Museau d'athlète avec sourire confiant */}
-    <ellipse cx="20" cy="20" rx="3.5" ry="3" fill="currentColor" opacity="0.8"/>
-    {/* Truffe noire d'athlète */}
-    <ellipse cx="20" cy="19.5" rx="1.5" ry="1.2" fill="currentColor"/>
-    {/* Sourire confiant de sportif */}
-    <path d="M16.5 21C17.5 22.5 18.5 23 20 23C21.5 23 22.5 22.5 23.5 21" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-    {/* Langue d'athlète qui dépasse */}
-    <ellipse cx="20" cy="23.5" rx="1.2" ry="0.8" fill="#ff6b9d" opacity="0.9"/>
+    {/* Museau réaliste avec volume */}
+    <ellipse cx="16" cy="17" rx="3" ry="2.5" fill="currentColor" opacity="0.8"/>
+    <ellipse cx="16" cy="16.5" rx="2.2" ry="1.8" fill="currentColor" opacity="0.9"/>
     
-    {/* Corps musclé d'athlète */}
-    <path 
-      d="M11 26C11 26 15 28 20 28C25 28 29 26 29 26V35C29 36.1 28.1 37 27 37H13C11.9 37 11 36.1 11 35V26Z" 
-      fill="currentColor" 
-      opacity="0.7"
-    />
+    {/* Truffe noire réaliste */}
+    <ellipse cx="16" cy="16" rx="1.2" ry="1" fill="currentColor"/>
+    {/* Reflet sur la truffe */}
+    <ellipse cx="15.7" cy="15.7" rx="0.3" ry="0.2" fill="white" opacity="0.6"/>
     
-    {/* Pattes puissantes d'athlète */}
-    <ellipse cx="15" cy="37" rx="2" ry="2.5" fill="currentColor" opacity="0.9"/>
-    <ellipse cx="25" cy="37" rx="2" ry="2.5" fill="currentColor" opacity="0.9"/>
+    {/* Ligne du museau */}
+    <path d="M16 16.8L16 18.5" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round"/>
     
-    {/* Queue dynamique de champion */}
-    <path d="M29 28C31 27 33.5 26.5 35 29C36 30.5 35.2 32 33.5 32C31.5 32 30 30 29 28Z" fill="currentColor" opacity="0.8"/>
+    {/* Bouche souriante réaliste */}
+    <path d="M13.5 18.5C14.5 19.5 15.2 19.8 16 19.8C16.8 19.8 17.5 19.5 18.5 18.5" 
+          stroke="currentColor" strokeWidth="1" fill="none" strokeLinecap="round"/>
     
-    {/* Médaille de champion */}
-    <circle cx="20" cy="30" r="2.5" fill="#FFD700" opacity="0.9"/>
-    <circle cx="20" cy="30" r="1.8" fill="#FFA500" opacity="0.95"/>
-    <text x="20" y="31.5" textAnchor="middle" fontSize="2.5" fill="white" fontWeight="bold">🏆</text>
+    {/* Langue rose qui dépasse légèrement */}
+    <ellipse cx="16" cy="20" rx="0.8" ry="0.5" fill="#ff9999" opacity="0.9"/>
+    
+    {/* Corps simple mais proportionné */}
+    <ellipse cx="16" cy="24" rx="6" ry="4" fill="currentColor" opacity="0.7"/>
+    
+    {/* Pattes avant */}
+    <ellipse cx="13" cy="27" rx="1.2" ry="2" fill="currentColor" opacity="0.8"/>
+    <ellipse cx="19" cy="27" rx="1.2" ry="2" fill="currentColor" opacity="0.8"/>
+    
+    {/* Queue qui remue */}
+    <path d="M22 22C23.5 21.5 25 21.8 25.5 23.5C25.8 24.5 25.2 25.2 24.2 25C23 24.7 22.2 23.2 22 22Z" 
+          fill="currentColor" opacity="0.8"/>
+    
+    {/* Collier simple */}
+    <ellipse cx="16" cy="21" rx="7" ry="1" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.6"/>
+    <circle cx="16" cy="20.2" r="0.8" fill="currentColor" opacity="0.7"/>
     
     {/* Définition du gradient */}
     <defs>
