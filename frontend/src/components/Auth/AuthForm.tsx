@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { DogIcon, UserIcon, LockIcon, MailIcon } from '../Icons/IconSet';
+import { CaniCoachLogo, UserIcon, LockIcon, MailIcon } from '../Icons/IconSet';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
@@ -80,7 +80,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         {/* Logo Esprit Dog style */}
         <div className="auth-header">
           <div className="logo-container">
-            <DogIcon className="logo-icon" />
+            <CaniCoachLogo className="logo-icon" />
             <div className="logo-text">
               <span className="logo-cani">Cani</span>
               <span className="logo-coach">Coach</span>

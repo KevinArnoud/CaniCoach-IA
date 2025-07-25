@@ -163,6 +163,7 @@
   width: 56px;
   height: 56px;
   color: var(--esprit-primary);
+  filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.15));
 }
 
 .logo-text {
@@ -194,7 +195,13 @@
 .main-dog-icon {
   color: var(--esprit-primary);
   opacity: 0.9;
-  filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.15));
+  filter: drop-shadow(0 6px 12px rgba(37, 99, 235, 0.2));
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
 .welcome-title {

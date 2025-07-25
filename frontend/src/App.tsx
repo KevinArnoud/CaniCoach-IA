@@ -7,7 +7,7 @@ import { DogProfileForm } from './components/DogProfile/DogProfileForm';
 import { UserProfile } from './components/Profile/UserProfile';
 import { ProgressJournal } from './components/Features/ProgressJournal';
 import { WeeklyChallenges } from './components/Features/WeeklyChallenges';
-import { DogIcon, MessageIcon, PawIcon, UserIcon } from './components/Icons/IconSet';
+import { CaniCoachLogo, MessageIcon, PawIcon, UserIcon, DogIcon } from './components/Icons/IconSet';
 import './components/Auth/Auth.css';
 import './App.css';
 
@@ -38,7 +38,7 @@ const WelcomePage: React.FC<{
         {/* Header avec logo */}
         <div className="welcome-header">
           <div className="app-logo">
-            <DogIcon className="logo-icon" />
+            <CaniCoachLogo className="logo-icon" />
             <div className="logo-text">
               <span className="logo-cani">Cani</span>
               <span className="logo-coach">Coach</span>
@@ -49,7 +49,7 @@ const WelcomePage: React.FC<{
         {/* Section principale */}
         <div className="welcome-main">
           <div className="welcome-icon">
-            <DogIcon size={80} className="main-dog-icon" />
+            <CaniCoachLogo size={80} className="main-dog-icon" />
           </div>
           
           <h1 className="welcome-title">
@@ -188,7 +188,7 @@ const Dashboard: React.FC = () => {
       <header className="dashboard-header">
         <div className="header-content">
           <div className="header-logo">
-            <DogIcon className="header-icon" />
+            <CaniCoachLogo className="header-icon" />
             <span className="header-title">CaniCoach</span>
           </div>
           
@@ -246,7 +246,7 @@ const Dashboard: React.FC = () => {
 const LoadingScreen: React.FC = () => (
   <div className="loading-container">
     <div className="loading-content">
-      <DogIcon size={48} className="loading-icon" />
+      <CaniCoachLogo size={48} className="loading-icon" />
       <h2 className="loading-title">CaniCoach</h2>
       <p className="loading-text">Chargement...</p>
       <div className="loading-spinner"></div>
