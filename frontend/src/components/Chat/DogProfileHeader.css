@@ -1,9 +1,10 @@
 /* Header du chat - Style Esprit Dog avec titre complet */
 
 .dog-profile-header {
-  background: var(--esprit-primary, #2B5CE6);
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
   color: white;
   position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Header principal avec navigation */
@@ -11,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: rgba(0, 0, 0, 0.1);
 }
 
@@ -19,33 +20,38 @@
   background: none;
   border: none;
   color: white;
-  padding: 0.5rem;
+  padding: 0.75rem;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 12px;
   transition: background 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
 }
 
 .back-button:hover {
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  min-height: 60px;
 }
 
 .header-title {
   flex: 1;
   text-align: center;
-  padding: 0 1rem; /* Évite que le titre touche les bords */
+  padding: 0 1rem;
 }
 
 .app-name {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
+  display: block;
 }
 
 .header-spacer {
-  width: 40px; /* Même largeur que le bouton retour pour centrer */
+  width: 44px;
 }
 
 /* Section profil du chien */
@@ -53,21 +59,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 1.5rem 1rem 1.25rem;
   text-align: center;
 }
 
 .dog-avatar {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dog-photo {
@@ -77,25 +84,26 @@
 }
 
 .dog-icon-placeholder {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .dog-info {
-  max-width: 280px;
+  max-width: 300px;
 }
 
 .dog-name {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0.375rem 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.01em;
 }
 
 .dog-details {
-  font-size: 1rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  opacity: 0.85;
   font-weight: 500;
   margin: 0;
 }
@@ -103,32 +111,44 @@
 /* Responsive */
 @media (max-width: 430px) {
   .header-main {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.75rem;
+    min-height: 56px;
+  }
+  
+  .back-button {
+    width: 40px;
+    height: 40px;
+    padding: 0.625rem;
   }
   
   .app-name {
-    font-size: 1rem;
+    font-size: 1.125rem;
+  }
+  
+  .header-spacer {
+    width: 40px;
   }
   
   .dog-profile-section {
-    padding: 1.5rem 1rem 1rem;
+    padding: 1.25rem 0.75rem 1rem;
   }
   
   .dog-avatar {
-    width: 80px;
-    height: 80px;
+    width: 75px;
+    height: 75px;
+    margin-bottom: 0.625rem;
   }
   
   .dog-icon-placeholder {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
   }
   
   .dog-name {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
   }
   
   .dog-details {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
   }
 }
