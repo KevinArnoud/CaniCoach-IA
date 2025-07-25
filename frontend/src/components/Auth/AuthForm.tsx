@@ -6,8 +6,8 @@ type AuthMode = 'signin' | 'signup' | 'reset';
 
 export const AuthForm: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('signin');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test@example.com');
+  const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -16,6 +16,8 @@ export const AuthForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('AuthForm: handleSubmit appelé', { mode, email });
     
     if (!email.trim()) {
       setError('Veuillez saisir votre email');
@@ -36,14 +38,17 @@ export const AuthForm: React.FC = () => {
       
       switch (mode) {
         case 'signin':
+          console.log('AuthForm: Tentative de connexion');
           result = await signIn(email, password);
           break;
           
         case 'signup':
+          console.log('AuthForm: Tentative d\'inscription');
           result = await signUp(email, password);
           break;
           
         case 'reset':
+          console.log('AuthForm: Tentative de reset');
           result = await resetPassword(email);
           if (!result.error) {
             setMessage('Email de réinitialisation envoyé !');
@@ -52,9 +57,13 @@ export const AuthForm: React.FC = () => {
       }
 
       if (result?.error) {
+        console.error('AuthForm: Erreur résultat', result.error);
         setError('Erreur de connexion. Vérifiez vos identifiants.');
+      } else {
+        console.log('AuthForm: Succès');
       }
     } catch (err) {
+      console.error('AuthForm: Erreur catch', err);
       setError('Une erreur inattendue s\'est produite');
     } finally {
       setLoading(false);
@@ -78,6 +87,8 @@ export const AuthForm: React.FC = () => {
     }
   };
 
+  console.log('AuthForm render - mode:', mode, 'loading:', loading);
+
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -91,7 +102,7 @@ export const AuthForm: React.FC = () => {
           </div>
           <h2 className="auth-title">{getTitle()}</h2>
           <p className="auth-subtitle">
-            {mode === 'signin' && 'Accédez à votre espace personnel'}
+            {mode === 'signin' && 'Accédez à votre espace personnel (Mode développement)'}
             {mode === 'signup' && 'Créez votre compte pour commencer'}
             {mode === 'reset' && 'Nous vous enverrons un lien de réinitialisation'}
           </p>
@@ -216,8 +227,7 @@ export const AuthForm: React.FC = () => {
 
         <div className="auth-footer">
           <p className="footer-text">
-            Basé sur les méthodes d'éducation positive de{' '}
-            <strong>Tony Silvestre</strong>
+            <strong>Mode développement :</strong> Utilisez n'importe quel email/mot de passe
           </p>
         </div>
       </div>

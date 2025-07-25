@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Mock user for development mode
 const mockUser = {
@@ -28,28 +28,97 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Initialisation simple au montage
+  useEffect(() => {
+    console.log('AuthProvider: Initialisation');
+    // Vérifier s'il y a un utilisateur sauvegardé
+    const savedUser = localStorage.getItem('canicoach_user');
+    if (savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        console.log('AuthProvider: Utilisateur trouvé dans localStorage', parsedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('AuthProvider: Erreur parsing user', error);
+        localStorage.removeItem('canicoach_user');
+      }
+    }
+    setLoading(false);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
-    console.log('Mode développement: connexion simulée');
-    setUser(mockUser);
-    return { error: null };
+    console.log('AuthProvider: signIn appelé', { email });
+    try {
+      setLoading(true);
+      
+      // Simulation d'une connexion réussie en mode dev
+      const userToSet = { ...mockUser, email };
+      
+      // Sauvegarder dans localStorage
+      localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
+      
+      // Mettre à jour l'état
+      setUser(userToSet);
+      
+      console.log('AuthProvider: Connexion réussie', userToSet);
+      return { error: null };
+    } catch (error) {
+      console.error('AuthProvider: Erreur signIn', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    console.log('Mode développement: inscription simulée');
-    setUser(mockUser);
-    return { error: null };
+    console.log('AuthProvider: signUp appelé', { email });
+    try {
+      setLoading(true);
+      
+      // Simulation d'une inscription réussie en mode dev
+      const userToSet = { ...mockUser, email };
+      
+      // Sauvegarder dans localStorage
+      localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
+      
+      // Mettre à jour l'état
+      setUser(userToSet);
+      
+      console.log('AuthProvider: Inscription réussie', userToSet);
+      return { error: null };
+    } catch (error) {
+      console.error('AuthProvider: Erreur signUp', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    console.log('Mode développement: déconnexion simulée');
-    setUser(null);
-    return { error: null };
+    console.log('AuthProvider: signOut appelé');
+    try {
+      setLoading(true);
+      
+      // Supprimer de localStorage
+      localStorage.removeItem('canicoach_user');
+      
+      // Mettre à jour l'état
+      setUser(null);
+      
+      console.log('AuthProvider: Déconnexion réussie');
+      return { error: null };
+    } catch (error) {
+      console.error('AuthProvider: Erreur signOut', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetPassword = async (email: string) => {
-    console.log('Mode développement: reset mot de passe simulé');
+    console.log('AuthProvider: resetPassword appelé', { email });
     return { error: null };
   };
 
@@ -61,6 +130,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     resetPassword,
   };
+
+  console.log('AuthProvider render - user:', user, 'loading:', loading);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

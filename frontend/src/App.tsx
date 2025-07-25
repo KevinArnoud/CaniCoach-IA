@@ -7,7 +7,7 @@ import { DogProfileForm } from './components/DogProfile/DogProfileForm';
 import { UserProfile } from './components/Profile/UserProfile';
 import { ProgressJournal } from './components/Features/ProgressJournal';
 import { WeeklyChallenges } from './components/Features/WeeklyChallenges';
-import { CaniCoachLogo, MessageIcon, PawIcon, UserIcon, DogIcon } from './components/Icons/IconSet';
+import { CaniCoachLogo, MessageIcon, PawIcon, UserIcon } from './components/Icons/IconSet';
 import './components/Auth/Auth.css';
 import './App.css';
 
@@ -20,7 +20,7 @@ interface DogProfile {
   photoUrl?: string;
 }
 
-// Page d'accueil style Esprit Dog
+// Page d'accueil
 const WelcomePage: React.FC<{ 
   onStartChat: () => void; 
   onCreateProfile: () => void;
@@ -35,7 +35,6 @@ const WelcomePage: React.FC<{
   return (
     <div className="welcome-container">
       <div className="welcome-content">
-        {/* Header avec logo */}
         <div className="welcome-header">
           <div className="app-logo">
             <CaniCoachLogo className="logo-icon" />
@@ -46,7 +45,6 @@ const WelcomePage: React.FC<{
           </div>
         </div>
 
-        {/* Section principale */}
         <div className="welcome-main">
           <div className="welcome-icon">
             <CaniCoachLogo size={80} className="main-dog-icon" />
@@ -81,7 +79,6 @@ const WelcomePage: React.FC<{
           </div>
         </div>
 
-        {/* Fonctionnalités */}
         <div className="features-grid">
           <div className="feature-card">
             <div className="feature-icon chat-icon">
@@ -124,7 +121,7 @@ const WelcomePage: React.FC<{
   );
 };
 
-// Dashboard principal après connexion
+// Dashboard principal
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<'welcome' | 'profile' | 'chat'>('welcome');
@@ -184,7 +181,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard">
-      {/* Header minimaliste */}
       <header className="dashboard-header">
         <div className="header-content">
           <div className="header-logo">
@@ -211,7 +207,6 @@ const Dashboard: React.FC = () => {
         </div>
       </header>
 
-      {/* Contenu principal */}
       <main className="dashboard-main">
         <WelcomePage 
           onStartChat={() => setCurrentView('chat')}
@@ -254,20 +249,24 @@ const LoadingScreen: React.FC = () => (
   </div>
 );
 
-// Gestion de l'état d'authentification
+// Gestion de l'état d'authentification - SIMPLIFIÉ AU MAXIMUM
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
+
+  console.log('AppContent render - user:', user, 'loading:', loading);
 
   if (loading) {
     return <LoadingScreen />;
   }
 
-  return user ? (
+  if (!user) {
+    return <AuthForm />;
+  }
+
+  return (
     <SubscriptionProvider>
       <Dashboard />
     </SubscriptionProvider>
-  ) : (
-    <AuthForm />
   );
 };
 
