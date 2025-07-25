@@ -122,15 +122,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   };
 
   const formatAIResponse = (response: any): string => {
-    let formattedResponse = `**🤗 Validation & Déculpabilisation**\n${response.validation}\n\n`;
-    formattedResponse += `**🧠 Pourquoi ce comportement ?**\n${response.explanation}\n\n`;
-    formattedResponse += `**📋 Plan d'action étape par étape :**\n`;
+    let formattedResponse = `**✅ Validation & Déculpabilisation**\n${response.validation}\n\n`;
+    formattedResponse += `**💡 Pourquoi ce comportement ?**\n${response.explanation}\n\n`;
+    formattedResponse += `**🎯 Plan d'action étape par étape :**\n`;
     
     response.actionPlan.forEach((step: string, index: number) => {
       formattedResponse += `\n${index + 1}. ${step}`;
     });
     
-    formattedResponse += `\n\n💪 **Encouragement :** Rappelez-vous que l'éducation canine demande de la patience et de la constance. Vous êtes sur la bonne voie en cherchant des solutions bienveillantes pour ${dogName} !`;
+    formattedResponse += `\n\n🌟 **Encouragement :** L'éducation canine demande patience et constance. Vous êtes sur la bonne voie avec ${dogName} !`;
     
     return formattedResponse;
   };
