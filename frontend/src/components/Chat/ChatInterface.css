@@ -3,7 +3,7 @@
 .chat-interface {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 80px);
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
@@ -11,23 +11,23 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem 0 0.5rem 0;
+  padding: 0.5rem 0 0.25rem 0;
   background: transparent;
   min-height: 0;
 }
 
 .messages-list {
-  padding: 0 1rem;
+  padding: 0 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   max-width: 100%;
   min-height: 100%;
 }
 
 .message {
   display: flex;
-  max-width: 90%;
+  max-width: 92%;
   animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -42,7 +42,7 @@
 }
 
 .message-bubble {
-  padding: 0.875rem 1.125rem;
+  padding: 0.625rem 0.875rem;
   border-radius: 20px;
   position: relative;
   word-wrap: break-word;
@@ -68,7 +68,7 @@
 
 .message-content {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   line-height: 1.6;
   font-weight: 400;
 }
@@ -83,9 +83,9 @@
 }
 
 .message-time {
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   opacity: 0.7;
-  margin-top: 0.375rem;
+  margin-top: 0.25rem;
   text-align: right;
 }
 
@@ -109,14 +109,14 @@
 .typing .message-bubble {
   background: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid rgba(226, 232, 240, 0.8) !important;
-  padding: 1rem 1.25rem !important;
+  padding: 0.75rem 1rem !important;
 }
 
 .typing-indicator {
   display: flex;
   gap: 6px;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .typing-dot {
@@ -132,7 +132,7 @@
 .typing-dot:nth-child(3) { animation-delay: 0s; }
 
 .typing-text {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #64748b;
   font-style: italic;
 }
@@ -151,7 +151,7 @@
 /* Zone de saisie moderne */
 .input-container {
   background: rgba(255, 255, 255, 0.95);
-  padding: 0.875rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-top: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(20px);
@@ -161,10 +161,10 @@
 .input-wrapper {
   display: flex;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: 0.5rem;
   background: #f8fafc;
   border-radius: 24px;
-  padding: 0.625rem;
+  padding: 0.375rem;
   border: 2px solid transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -182,9 +182,9 @@
   background: transparent;
   resize: none;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   line-height: 1.5;
-  padding: 0.625rem 0.75rem;
+  padding: 0.5rem 0.625rem;
   border-radius: 16px;
   outline: none;
   max-height: 100px;
@@ -200,8 +200,8 @@
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,8 +231,8 @@
 /* Suggestions rapides */
 .quick-suggestions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -241,9 +241,9 @@
   background: rgba(37, 99, 235, 0.1);
   border: 1px solid rgba(37, 99, 235, 0.2);
   color: #2563eb;
-  padding: 0.375rem 0.875rem;
+  padding: 0.25rem 0.625rem;
   border-radius: 20px;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -266,9 +266,9 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
   color: #dc2626;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 12px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   text-align: center;
   grid-column: 1 / -1;
@@ -307,49 +307,49 @@
 /* Responsive */
 @media (max-width: 430px) {
   .chat-interface {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 70px);
   }
   
   .messages-list {
-    padding: 0 0.75rem;
-    gap: 0.75rem;
+    padding: 0 0.5rem;
+    gap: 0.5rem;
   }
   
   .message {
-    max-width: 95%;
+    max-width: 96%;
   }
   
   .message-bubble {
-    padding: 0.75rem 0.875rem;
-    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
   }
   
   .input-container {
-    padding: 0.75rem;
+    padding: 0.375rem 0.5rem;
   }
   
   .input-wrapper {
-    gap: 0.5rem;
-    padding: 0.375rem;
+    gap: 0.375rem;
+    padding: 0.25rem;
   }
   
   .send-button {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
   
   .message-input {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
+    padding: 0.375rem 0.5rem;
   }
   
   .quick-suggestions {
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 0.375rem;
+    margin-top: 0.375rem;
   }
   
   .suggestion-chip {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    padding: 0.1875rem 0.5rem;
   }
 }
