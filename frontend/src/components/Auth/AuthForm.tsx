@@ -32,17 +32,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           result = await signIn(email, password);
           if (!result.error) {
             setMessage('Connexion réussie !');
-            onSuccess?.();
+            setTimeout(() => {
+              onSuccess?.();
+            }, 500);
           }
           break;
           
         case 'signup':
           result = await signUp(email, password);
           if (!result.error) {
-            setMessage('Inscription réussie ! Connexion automatique en mode développement.');
+            setMessage('Inscription réussie !');
             setTimeout(() => {
               onSuccess?.();
-            }, 1000);
+            }, 500);
           }
           break;
           

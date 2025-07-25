@@ -58,11 +58,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if Supabase client is available
     if (!supabase) {
       console.warn('Supabase client not initialized. Using development mode with mock authentication.');
-      // In development mode, automatically sign in with mock user
-      setTimeout(() => {
-        setUser(mockUser);
-        setLoading(false);
-      }, 1000);
       setLoading(false);
       return;
     }
@@ -87,9 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
       // Mock successful sign in for development
-      setTimeout(() => {
-        setUser(mockUser);
-      }, 500);
+      setUser(mockUser);
       return { error: null };
     }
     const { error } = await supabase.auth.signInWithPassword({
@@ -102,9 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     if (!supabase) {
       // Mock successful sign up for development
-      setTimeout(() => {
-        setUser(mockUser);
-      }, 500);
+      setUser(mockUser);
       return { error: null };
     }
     const { error } = await supabase.auth.signUp({
