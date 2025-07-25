@@ -16,30 +16,37 @@ export const DogIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
     fill="none" 
     className={className}
   >
-    {/* Tête du chien stylisée */}
-    <circle cx="12" cy="8" r="6" fill="currentColor" opacity="0.1"/>
+    {/* Tête du chien plus reconnaissable */}
+    <ellipse cx="12" cy="10" rx="7" ry="6" fill="currentColor" opacity="0.15"/>
     <path 
-      d="M12 3C15.31 3 18 5.69 18 9C18 10.5 17.5 11.87 16.66 12.96L15.5 14.5C15.22 14.89 14.64 14.89 14.36 14.5L12 11.5L9.64 14.5C9.36 14.89 8.78 14.89 8.5 14.5L7.34 12.96C6.5 11.87 6 10.5 6 9C6 5.69 8.69 3 12 3Z" 
+      d="M12 4C15.31 4 18 6.69 18 10C18 11.5 17.5 12.87 16.66 13.96L15.5 15.5C15.22 15.89 14.64 15.89 14.36 15.5L12 12.5L9.64 15.5C9.36 15.89 8.78 15.89 8.5 15.5L7.34 13.96C6.5 12.87 6 11.5 6 10C6 6.69 8.69 4 12 4Z" 
       fill="currentColor"
     />
-    {/* Oreilles */}
-    <ellipse cx="9" cy="6" rx="2" ry="3" fill="currentColor" opacity="0.8"/>
-    <ellipse cx="15" cy="6" rx="2" ry="3" fill="currentColor" opacity="0.8"/>
+    {/* Oreilles tombantes plus réalistes */}
+    <ellipse cx="8.5" cy="7" rx="2.5" ry="4" fill="currentColor" opacity="0.9" transform="rotate(-20 8.5 7)"/>
+    <ellipse cx="15.5" cy="7" rx="2.5" ry="4" fill="currentColor" opacity="0.9" transform="rotate(20 15.5 7)"/>
     {/* Yeux */}
-    <circle cx="10" cy="8" r="1" fill="white"/>
-    <circle cx="14" cy="8" r="1" fill="white"/>
-    {/* Museau */}
-    <ellipse cx="12" cy="10" rx="1.5" ry="1" fill="currentColor" opacity="0.6"/>
+    <circle cx="10" cy="9" r="1.2" fill="white"/>
+    <circle cx="14" cy="9" r="1.2" fill="white"/>
+    <circle cx="10" cy="9" r="0.6" fill="currentColor"/>
+    <circle cx="14" cy="9" r="0.6" fill="currentColor"/>
+    {/* Museau avec truffe */}
+    <ellipse cx="12" cy="11.5" rx="2" ry="1.5" fill="currentColor" opacity="0.7"/>
+    <ellipse cx="12" cy="11" rx="0.8" ry="0.6" fill="currentColor"/>
+    {/* Bouche souriante */}
+    <path d="M10.5 12.5C11 13 11.5 13.2 12 13.2C12.5 13.2 13 13 13.5 12.5" stroke="currentColor" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
     {/* Corps stylisé */}
     <path 
-      d="M8 15C8 15 10 16 12 16C14 16 16 15 16 15V19C16 20.1 15.1 21 14 21H10C8.9 21 8 20.1 8 19V15Z" 
+      d="M8 16C8 16 10 17 12 17C14 17 16 16 16 16V20C16 21.1 15.1 22 14 22H10C8.9 22 8 21.1 8 20V16Z" 
       fill="currentColor" 
       opacity="0.7"
     />
+    {/* Queue qui remue */}
+    <path d="M16.5 18C17 17.5 17.8 17.2 18.5 17.8C19 18.2 18.8 19 18.2 19.2C17.5 19.5 16.8 19 16.5 18Z" fill="currentColor" opacity="0.8"/>
   </svg>
 );
 
-// Logo alternatif plus moderne
+// Logo principal CaniCoach - Chien très reconnaissable
 export const CaniCoachLogo: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   <svg 
     width={size} 
@@ -48,39 +55,54 @@ export const CaniCoachLogo: React.FC<IconProps> = ({ className = '', size = 24 }
     fill="none" 
     className={className}
   >
-    {/* Cercle de fond avec gradient */}
-    <circle cx="16" cy="16" r="15" fill="url(#logoGradient)" opacity="0.1"/>
+    {/* Fond avec gradient */}
+    <circle cx="16" cy="16" r="15" fill="url(#logoGradient)" opacity="0.08"/>
     
-    {/* Forme principale du chien */}
+    {/* Tête de chien très reconnaissable */}
+    <ellipse cx="16" cy="14" rx="9" ry="7" fill="currentColor" opacity="0.1"/>
     <path 
-      d="M16 4C19.5 4 22.5 6.5 22.5 10C22.5 12 21.8 13.8 20.6 15.2L19 17.5C18.6 18 17.9 18 17.5 17.5L16 15L14.5 17.5C14.1 18 13.4 18 13 17.5L11.4 15.2C10.2 13.8 9.5 12 9.5 10C9.5 6.5 12.5 4 16 4Z" 
+      d="M16 6C20 6 23 8.5 23 12C23 14 22.2 15.8 20.8 17L19 19C18.5 19.5 17.8 19.5 17.3 19L16 17L14.7 19C14.2 19.5 13.5 19.5 13 19L11.2 17C9.8 15.8 9 14 9 12C9 8.5 12 6 16 6Z" 
       fill="currentColor"
     />
     
-    {/* Oreilles avec style moderne */}
-    <path d="M12 7C12 5.5 13 4.5 14 5C14.5 5.2 15 6 15 7.5C15 9 14 10 13 9.5C12.2 9.1 12 8 12 7Z" fill="currentColor" opacity="0.9"/>
-    <path d="M20 7C20 5.5 19 4.5 18 5C17.5 5.2 17 6 17 7.5C17 9 18 10 19 9.5C19.8 9.1 20 8 20 7Z" fill="currentColor" opacity="0.9"/>
+    {/* Oreilles tombantes très reconnaissables */}
+    <ellipse cx="11" cy="10" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(-25 11 10)"/>
+    <ellipse cx="21" cy="10" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(25 21 10)"/>
+    {/* Intérieur des oreilles */}
+    <ellipse cx="11.5" cy="10.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(-25 11.5 10.5)"/>
+    <ellipse cx="20.5" cy="10.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(25 20.5 10.5)"/>
     
-    {/* Yeux expressifs */}
-    <circle cx="13.5" cy="9" r="1.2" fill="white"/>
-    <circle cx="18.5" cy="9" r="1.2" fill="white"/>
-    <circle cx="13.5" cy="9" r="0.6" fill="currentColor"/>
-    <circle cx="18.5" cy="9" r="0.6" fill="currentColor"/>
+    {/* Yeux expressifs et amicaux */}
+    <circle cx="13" cy="12" r="1.5" fill="white"/>
+    <circle cx="19" cy="12" r="1.5" fill="white"/>
+    <circle cx="13" cy="12" r="0.8" fill="currentColor"/>
+    <circle cx="19" cy="12" r="0.8" fill="currentColor"/>
+    {/* Reflets dans les yeux */}
+    <circle cx="13.3" cy="11.7" r="0.3" fill="white"/>
+    <circle cx="19.3" cy="11.7" r="0.3" fill="white"/>
     
-    {/* Museau souriant */}
-    <ellipse cx="16" cy="11.5" rx="2" ry="1.2" fill="currentColor" opacity="0.7"/>
-    <path d="M16 12.5C15.5 13 15.5 13.5 16 14C16.5 13.5 16.5 13 16 12.5Z" fill="white"/>
+    {/* Museau proéminent */}
+    <ellipse cx="16" cy="15" rx="2.5" ry="2" fill="currentColor" opacity="0.8"/>
+    {/* Truffe noire */}
+    <ellipse cx="16" cy="14.5" rx="1" ry="0.8" fill="currentColor"/>
+    {/* Bouche souriante */}
+    <path d="M14 16C15 17 16 17.2 16 17.2C16 17.2 17 17 18 16" stroke="currentColor" strokeWidth="1" fill="none" strokeLinecap="round"/>
+    {/* Langue qui dépasse légèrement */}
+    <ellipse cx="16" cy="17.5" rx="0.8" ry="0.4" fill="#ff6b9d" opacity="0.8"/>
     
     {/* Corps stylisé */}
     <path 
-      d="M11 18C11 18 13.5 19.5 16 19.5C18.5 19.5 21 18 21 18V25C21 26.7 19.7 28 18 28H14C12.3 28 11 26.7 11 25V18Z" 
+      d="M10 20C10 20 13 21.5 16 21.5C19 21.5 22 20 22 20V26C22 27.1 21.1 28 20 28H12C10.9 28 10 27.1 10 26V20Z" 
       fill="currentColor" 
-      opacity="0.6"
+      opacity="0.7"
     />
     
-    {/* Pattes */}
-    <ellipse cx="13" cy="27" rx="1.5" ry="2" fill="currentColor" opacity="0.8"/>
-    <ellipse cx="19" cy="27" rx="1.5" ry="2" fill="currentColor" opacity="0.8"/>
+    {/* Pattes avant */}
+    <ellipse cx="13" cy="28" rx="1.2" ry="1.5" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="19" cy="28" rx="1.2" ry="1.5" fill="currentColor" opacity="0.9"/>
+    
+    {/* Queue qui remue */}
+    <path d="M22 22C23 21 24.5 20.5 25.5 22C26 22.8 25.5 24 24.5 24C23.2 24 22.5 23 22 22Z" fill="currentColor" opacity="0.8"/>
     
     {/* Définition du gradient */}
     <defs>
@@ -92,7 +114,7 @@ export const CaniCoachLogo: React.FC<IconProps> = ({ className = '', size = 24 }
   </svg>
 );
 
-// Logo minimaliste et élégant
+// Logo alternatif minimaliste
 export const MinimalDogLogo: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   <svg 
     width={size} 
@@ -101,36 +123,24 @@ export const MinimalDogLogo: React.FC<IconProps> = ({ className = '', size = 24 
     fill="none" 
     className={className}
   >
-    {/* Forme géométrique moderne */}
-    <path 
-      d="M12 2L18 8V16C18 19.31 15.31 22 12 22C8.69 22 6 19.31 6 16V8L12 2Z" 
-      fill="currentColor" 
-      opacity="0.1"
-    />
-    
-    {/* Tête stylisée */}
-    <path 
-      d="M12 4L16 8V12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12V8L12 4Z" 
-      fill="currentColor"
-    />
-    
-    {/* Oreilles géométriques */}
-    <path d="M9 6L12 4L11 7Z" fill="currentColor" opacity="0.8"/>
-    <path d="M15 6L12 4L13 7Z" fill="currentColor" opacity="0.8"/>
-    
-    {/* Yeux minimalistes */}
-    <circle cx="10.5" cy="10" r="0.8" fill="white"/>
-    <circle cx="13.5" cy="10" r="0.8" fill="white"/>
-    
-    {/* Museau simple */}
-    <path d="M12 12C11.5 12.5 11.5 13 12 13.5C12.5 13 12.5 12.5 12 12Z" fill="white"/>
-    
-    {/* Corps géométrique */}
-    <path 
-      d="M10 17V20C10 20.55 10.45 21 11 21H13C13.55 21 14 20.55 14 20V17H10Z" 
-      fill="currentColor" 
-      opacity="0.7"
-    />
+    {/* Silhouette de chien simple mais reconnaissable */}
+    <circle cx="12" cy="8" r="5" fill="currentColor" opacity="0.1"/>
+    <circle cx="12" cy="8" r="4" fill="currentColor"/>
+    {/* Oreilles simples */}
+    <circle cx="9" cy="6" r="2" fill="currentColor" opacity="0.8"/>
+    <circle cx="15" cy="6" r="2" fill="currentColor" opacity="0.8"/>
+    {/* Yeux */}
+    <circle cx="10.5" cy="8" r="0.5" fill="white"/>
+    <circle cx="13.5" cy="8" r="0.5" fill="white"/>
+    {/* Museau */}
+    <circle cx="12" cy="10" r="1" fill="currentColor" opacity="0.6"/>
+    {/* Corps simple */}
+    <rect x="10" y="12" width="4" height="8" rx="2" fill="currentColor" opacity="0.7"/>
+    {/* Pattes */}
+    <circle cx="11" cy="20" r="1" fill="currentColor" opacity="0.8"/>
+    <circle cx="13" cy="20" r="1" fill="currentColor" opacity="0.8"/>
+    {/* Queue */}
+    <circle cx="15" cy="16" r="1.5" fill="currentColor" opacity="0.6"/>
   </svg>
 );
 // Icône utilisateur moderne

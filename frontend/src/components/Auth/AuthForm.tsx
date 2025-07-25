@@ -20,6 +20,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation simple
+    if (!email.trim()) {
+      setError('Veuillez saisir votre email');
+      return;
+    }
+    
+    if (mode !== 'reset' && !password.trim()) {
+      setError('Veuillez saisir votre mot de passe');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setMessage('');
@@ -45,10 +57,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
       }
 
       if (result?.error) {
-        setError(result.error.message);
+        setError('Erreur de connexion. Vérifiez vos identifiants.');
       } else if (mode !== 'reset') {
         setMessage('Connexion réussie !');
-        onSuccess?.();
+        if (onSuccess) {
+          onSuccess();
+        }
       }
     } catch (err) {
       setError('Une erreur inattendue s\'est produite');
@@ -108,6 +122,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
               required
               placeholder="votre@email.com"
               className="form-input"
+              autoComplete="email"
             />
           </div>
 
@@ -126,6 +141,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                 placeholder="••••••••"
                 minLength={6}
                 className="form-input"
+                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
               />
             </div>
           )}
@@ -157,14 +173,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
             <>
               <button
                 type="button"
-                onClick={() => setMode('signup')}
+                onClick={() => {
+                  setMode('signup');
+                  setError('');
+                  setMessage('');
+                }}
                 className="link-button"
               >
                 Pas encore de compte ? <strong>S'inscrire</strong>
               </button>
               <button
                 type="button"
-                onClick={() => setMode('reset')}
+                onClick={() => {
+                  setMode('reset');
+                  setError('');
+                  setMessage('');
+                }}
                 className="link-button link-subtle"
               >
                 Mot de passe oublié ?
@@ -175,7 +199,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           {mode === 'signup' && (
             <button
               type="button"
-              onClick={() => setMode('signin')}
+              onClick={() => {
+                setMode('signin');
+                setError('');
+                setMessage('');
+              }}
               className="link-button"
             >
               Déjà un compte ? <strong>Se connecter</strong>
@@ -185,7 +213,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           {mode === 'reset' && (
             <button
               type="button"
-              onClick={() => setMode('signin')}
+              onClick={() => {
+                setMode('signin');
+                setError('');
+                setMessage('');
+              }}
               className="link-button"
             >
               ← Retour à la connexion

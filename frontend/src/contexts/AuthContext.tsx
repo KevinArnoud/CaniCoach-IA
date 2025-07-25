@@ -55,37 +55,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if Supabase client is available
-    if (!supabase) {
-      console.warn('Supabase client not initialized. Using development mode with mock authentication.');
-      // En mode dev, on simule un utilisateur non connecté au départ
-      setLoading(false);
-      return;
-    }
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // En mode développement, on démarre sans utilisateur connecté
+    setLoading(false);
   }, []);
 
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
       // Mock successful sign in for development
+      console.log('Mode développement: connexion simulée');
       setUser(mockUser);
       return { error: null };
     }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -96,9 +77,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     if (!supabase) {
       // Mock successful sign up for development
+      console.log('Mode développement: inscription simulée');
       setUser(mockUser);
       return { error: null };
     }
+    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -109,9 +92,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     if (!supabase) {
       // Mock sign out for development
+      console.log('Mode développement: déconnexion simulée');
       setUser(null);
       return { error: null };
     }
+    
     const { error } = await supabase.auth.signOut();
     return { error };
   };
@@ -119,8 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetPassword = async (email: string) => {
     if (!supabase) {
       // Mock password reset for development
+      console.log('Mode développement: reset mot de passe simulé');
       return { error: null };
     }
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     return { error };
   };
