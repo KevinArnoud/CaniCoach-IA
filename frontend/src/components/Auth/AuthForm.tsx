@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { CaniCoachLogo, UserIcon, LockIcon, MailIcon } from '../Icons/IconSet';
+import { CaniCoachMainLogo, UserIcon, LockIcon, MailIcon } from '../Icons/IconSet';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
@@ -84,7 +84,7 @@ export const AuthForm: React.FC = () => {
       <div className="auth-card">
         <div className="auth-header">
           <div className="logo-container">
-            <CaniCoachLogo className="logo-icon" />
+            <CaniCoachMainLogo className="logo-icon" />
             <div className="logo-text">
               <span className="logo-cani">Cani</span>
               <span className="logo-coach">Coach</span>

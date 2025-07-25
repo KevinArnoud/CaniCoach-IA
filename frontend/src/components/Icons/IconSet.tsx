@@ -244,7 +244,47 @@ export const SendIcon: React.FC<IconProps> = ({ className = '', size = 20 }) => 
   </svg>
 );
 
-// Icône patte stylisée (pour remplacer emoji)
+// NOUVEAU LOGO CANICOACH - Patte dans bulle de dialogue
+export const CaniCoachMainLogo: React.FC<IconProps> = ({ className = '', size = 32 }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 32 32" 
+    fill="none" 
+    className={className}
+  >
+    {/* Bulle de dialogue moderne */}
+    <path 
+      d="M26 8C26 5.79086 24.2091 4 22 4H10C7.79086 4 6 5.79086 6 8V18C6 20.2091 7.79086 22 10 22H14L18 26L22 22H22C24.2091 22 26 20.2091 26 18V8Z" 
+      fill="currentColor" 
+      opacity="0.1"
+    />
+    <path 
+      d="M24 7C24 5.34315 22.6569 4 21 4H11C9.34315 4 8 5.34315 8 7V17C8 18.6569 9.34315 20 11 20H15L18 23L21 20H21C22.6569 20 24 18.6569 24 17V7Z" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      fill="none"
+    />
+    
+    {/* Empreinte de patte stylisée à l'intérieur */}
+    {/* Coussinet principal */}
+    <ellipse cx="16" cy="14" rx="3" ry="2.5" fill="currentColor" opacity="0.8"/>
+    
+    {/* Quatre doigts/coussinets */}
+    <ellipse cx="13" cy="10" rx="1.2" ry="1.8" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="16" cy="9" rx="1.2" ry="1.8" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="19" cy="10" rx="1.2" ry="1.8" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="16" cy="11" rx="1" ry="1.5" fill="currentColor" opacity="0.7"/>
+    
+    {/* Reflets pour donner du volume */}
+    <ellipse cx="15" cy="13" rx="1" ry="0.8" fill="white" opacity="0.3"/>
+    <ellipse cx="14" cy="9.5" rx="0.4" ry="0.6" fill="white" opacity="0.4"/>
+    <ellipse cx="17" cy="8.8" rx="0.4" ry="0.6" fill="white" opacity="0.4"/>
+    <ellipse cx="18.5" cy="9.5" rx="0.4" ry="0.6" fill="white" opacity="0.4"/>
+  </svg>
+);
+
+// Icône patte simple pour les autres usages
 export const PawIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   <svg 
     width={size} 
@@ -253,18 +293,17 @@ export const PawIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
     fill="currentColor" 
     className={className}
   >
-    {/* Icône moderne de suivi/progression */}
-    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
-    <path d="M8 12L11 15L16 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-    <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.2"/>
+    {/* Coussinet principal */}
+    <ellipse cx="12" cy="15" rx="3.5" ry="2.8" fill="currentColor"/>
     
-    {/* Indicateurs de progression autour */}
-    <circle cx="12" cy="4" r="1.5" fill="currentColor" opacity="0.6"/>
-    <circle cx="18.36" cy="7.64" r="1.5" fill="currentColor" opacity="0.7"/>
-    <circle cx="18.36" cy="16.36" r="1.5" fill="currentColor" opacity="0.8"/>
-    <circle cx="12" cy="20" r="1.5" fill="currentColor" opacity="0.9"/>
-    <circle cx="5.64" cy="16.36" r="1.5" fill="currentColor" opacity="0.8"/>
-    <circle cx="5.64" cy="7.64" r="1.5" fill="currentColor" opacity="0.7"/>
+    {/* Quatre doigts */}
+    <ellipse cx="8.5" cy="10" rx="1.5" ry="2.2" fill="currentColor"/>
+    <ellipse cx="12" cy="8.5" rx="1.5" ry="2.2" fill="currentColor"/>
+    <ellipse cx="15.5" cy="10" rx="1.5" ry="2.2" fill="currentColor"/>
+    <ellipse cx="12" cy="11.5" rx="1.2" ry="1.8" fill="currentColor" opacity="0.8"/>
+    
+    {/* Reflets */}
+    <ellipse cx="11" cy="14" rx="1.2" ry="1" fill="white" opacity="0.3"/>
   </svg>
 );
 

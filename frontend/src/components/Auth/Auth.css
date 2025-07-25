@@ -6,8 +6,9 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+  background: linear-gradient(135deg, var(--background-main) 0%, #0F172A 100%);
   position: relative;
+  overflow: hidden;
 }
 
 .auth-container::before {
@@ -18,22 +19,36 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 80%, rgba(43, 92, 230, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(43, 92, 230, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+}
+
+/* Illustration de fond */
+.auth-container::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23F59E0B' fill-opacity='0.05' d='M45.1,-78.1C58.9,-69.2,70.5,-55.4,79.2,-39.8C87.9,-24.2,93.7,-6.8,93.1,10.8C92.5,28.4,85.5,46.2,74.6,60.8C63.7,75.4,48.9,86.8,32.3,92.7C15.7,98.6,-2.7,99,-20.3,94.1C-37.9,89.2,-54.7,79,-67.8,65.2C-80.9,51.4,-90.3,34,-93.4,15.7C-96.5,-2.6,-93.3,-21.8,-84.8,-37.4C-76.3,-53,-62.5,-65,-47.1,-73.6C-31.7,-82.2,-14.6,-87.4,2.1,-90.7C18.8,-94,37.3,-95.4,45.1,-78.1Z'/%3E%3C/svg%3E") no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  z-index: 0;
 }
 
 .auth-card {
-  background: white;
+  background: var(--background-card);
   border-radius: 24px;
   padding: 3rem 2rem;
   width: 100%;
   max-width: 440px;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.05),
-    0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(59, 130, 246, 0.1);
   position: relative;
   z-index: 1;
+  backdrop-filter: blur(20px);
 }
 
 /* Header avec logo Esprit Dog style */
@@ -53,7 +68,8 @@
 .logo-icon {
   width: 40px;
   height: 40px;
-  color: #2B5CE6;
+  color: var(--primary-blue);
+  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
 }
 
 .logo-text {
@@ -65,24 +81,24 @@
 }
 
 .logo-cani {
-  color: #1E293B;
+  color: var(--text-primary);
 }
 
 .logo-coach {
-  color: #2B5CE6;
+  color: var(--primary-blue);
   margin-left: 2px;
 }
 
 .auth-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.01em;
 }
 
 .auth-subtitle {
-  color: #64748B;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0;
   line-height: 1.5;
@@ -106,7 +122,7 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--text-primary);
   font-size: 0.875rem;
   letter-spacing: 0.01em;
 }
@@ -114,29 +130,29 @@
 .label-icon {
   width: 16px;
   height: 16px;
-  color: #64748B;
+  color: var(--text-secondary);
 }
 
 .form-input {
   padding: 0.875rem 1rem;
-  border: 2px solid #E2E8F0;
-  border-radius: 12px;
+  border: 2px solid rgba(203, 213, 225, 0.2);
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-family: inherit;
-  background: #FAFBFC;
+  background: rgba(248, 250, 252, 0.05);
   transition: all 0.2s ease;
-  color: #1E293B;
+  color: var(--text-primary);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #2B5CE6;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(43, 92, 230, 0.1);
+  border-color: var(--primary-blue);
+  background: rgba(248, 250, 252, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
 .form-input::placeholder {
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 /* Boutons style Esprit Dog */
@@ -158,15 +174,15 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #2B5CE6 0%, #1E40AF 100%);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
   color: white;
   padding: 1rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(43, 92, 230, 0.25);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(43, 92, 230, 0.35);
+  background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1D4ED8 100%);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
 .btn-primary:active {
@@ -215,15 +231,15 @@
 }
 
 .alert-error {
-  background: #FEF2F2;
-  color: #DC2626;
-  border: 1px solid #FECACA;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .alert-success {
-  background: #F0FDF4;
-  color: #059669;
-  border: 1px solid #BBF7D0;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .alert-text {
@@ -242,47 +258,47 @@
 .link-button {
   background: none;
   border: none;
-  color: #64748B;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .link-button:hover {
-  color: #2B5CE6;
-  background: rgba(43, 92, 230, 0.05);
+  color: var(--primary-blue);
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .link-button strong {
-  color: #2B5CE6;
+  color: var(--primary-blue);
   font-weight: 600;
 }
 
 .link-subtle {
   font-size: 0.8125rem;
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 /* Footer */
 .auth-footer {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid rgba(203, 213, 225, 0.2);
   text-align: center;
 }
 
 .footer-text {
   font-size: 0.8125rem;
-  color: #64748B;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
 
 .footer-text strong {
-  color: #2B5CE6;
+  color: var(--accent-warm);
   font-weight: 600;
 }
 
