@@ -10,15 +10,20 @@ function App() {
     // Test API connection
     const testAPI = async () => {
       try {
-        const response = await fetch('/api/health')
+        const response = await fetch('/api/health', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
           const data = await response.json()
           setApiStatus(`✅ ${data.message}`)
         } else {
-          setApiStatus('❌ API connection failed')
+          setApiStatus(`❌ API connection failed (${response.status})`)
         }
       } catch (error) {
-        setApiStatus('❌ API not reachable')
+        setApiStatus(`❌ API not reachable: ${error instanceof Error ? error.message : 'Unknown error'}`)
       } finally {
         setIsLoading(false)
       }
