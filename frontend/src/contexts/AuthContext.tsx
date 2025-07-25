@@ -58,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if Supabase client is available
     if (!supabase) {
       console.warn('Supabase client not initialized. Using development mode with mock authentication.');
+      // En mode dev, on simule un utilisateur non connecté au départ
       setLoading(false);
       return;
     }

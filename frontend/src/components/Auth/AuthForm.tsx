@@ -30,22 +30,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
       switch (mode) {
         case 'signin':
           result = await signIn(email, password);
-          if (!result.error) {
-            setMessage('Connexion réussie !');
-            setTimeout(() => {
-              onSuccess?.();
-            }, 500);
-          }
           break;
           
         case 'signup':
           result = await signUp(email, password);
-          if (!result.error) {
-            setMessage('Inscription réussie !');
-            setTimeout(() => {
-              onSuccess?.();
-            }, 500);
-          }
           break;
           
         case 'reset':
@@ -58,6 +46,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
 
       if (result?.error) {
         setError(result.error.message);
+      } else if (mode !== 'reset') {
+        setMessage('Connexion réussie !');
+        onSuccess?.();
       }
     } catch (err) {
       setError('Une erreur inattendue s\'est produite');

@@ -21,9 +21,16 @@ interface DogProfile {
 }
 
 // Page d'accueil style Esprit Dog
-const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => void }> = ({ 
+const WelcomePage: React.FC<{ 
+  onStartChat: () => void; 
+  onCreateProfile: () => void;
+  onShowProgressJournal: () => void;
+  onShowWeeklyChallenges: () => void;
+}> = ({ 
   onStartChat, 
-  onCreateProfile 
+  onCreateProfile,
+  onShowProgressJournal,
+  onShowWeeklyChallenges
 }) => {
   return (
     <div className="welcome-container">
@@ -92,7 +99,7 @@ const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => vo
             <p className="feature-description">Éducation positive et bienveillante de Tony Silvestre</p>
             <button 
               className="btn btn-secondary btn-sm feature-button"
-              onClick={() => setShowWeeklyChallenges(true)}
+              onClick={onShowWeeklyChallenges}
             >
               Voir les défis
             </button>
@@ -106,7 +113,7 @@ const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => vo
             <p className="feature-description">Accompagnement adapté à chaque étape</p>
             <button 
               className="btn btn-secondary btn-sm feature-button"
-              onClick={() => setShowProgressJournal(true)}
+              onClick={onShowProgressJournal}
             >
               Voir le journal
             </button>
@@ -209,6 +216,8 @@ const Dashboard: React.FC = () => {
         <WelcomePage 
           onStartChat={() => setCurrentView('chat')}
           onCreateProfile={() => setCurrentView('profile')}
+          onShowProgressJournal={() => setShowProgressJournal(true)}
+          onShowWeeklyChallenges={() => setShowWeeklyChallenges(true)}
         />
       </main>
       
