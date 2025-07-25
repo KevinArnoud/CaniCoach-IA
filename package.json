@@ -1,19 +1,20 @@
 {
-  "name": "canicoach-ia",
+  "name": "doggy-daycare-ai",
   "version": "1.0.0",
-  "description": "Application conversationnelle pour l'éducation canine éthique basée sur les méthodes Esprit Dog",
+  "description": "Application de garde de chiens avec IA",
+  "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && npm run build",
-    "start": "npm run start:backend",
-    "start:backend": "cd backend && npm run start",
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+    "build": "cd frontend && npm run build",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && npm run preview",
+    "start:backend": "cd backend && npm start"
   },
-  "keywords": ["education-canine", "chatbot", "ia", "esprit-dog", "react", "nodejs"],
-  "author": "CaniCoach Team",
+  "keywords": ["doggy", "daycare", "ai", "react", "node"],
+  "author": "Votre nom",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
