@@ -4,7 +4,6 @@ import { AuthForm } from './components/Auth/AuthForm';
 import { ChatPage } from './components/Chat/ChatPage';
 import { DogIcon, MessageIcon, PawIcon } from './components/Icons/IconSet';
 import './components/Auth/Auth.css';
-import './styles/design-system.css';
 import './App.css';
 
 // Page d'accueil style Esprit Dog
