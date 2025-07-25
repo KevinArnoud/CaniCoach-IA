@@ -114,7 +114,7 @@ function App() {
       <div className="card info-card">
         <h3>📋 Configuration requise</h3>
         <div className="config-steps">
-          <p><strong>1.</strong> Créez un projet sur <a href="https://supabase.com" target=\"_blank">supabase.com</a></p>
+          <p><strong>1.</strong> Créez un projet sur <a href="https://supabase.com" target="_blank">supabase.com</a></p>
           <p><strong>2.</strong> Copiez vos clés dans <code>frontend/.env</code> et <code>backend/.env</code></p>
           <p><strong>3.</strong> Exécutez les migrations SQL dans l'éditeur Supabase</p>
           <p><strong>4.</strong> Démarrez le backend avec <code>cd backend && npm run dev</code></p>
