@@ -167,12 +167,8 @@ export const UserIcon: React.FC<IconProps> = ({ className = '', size = 20 }) => 
     fill="none" 
     className={className}
   >
-    <path 
-      d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13 3V5L11 7V9H3V11H21V9Z" 
-      fill="currentColor"
-    />
-    <circle cx="12" cy="8" r="4" fill="currentColor"/>
-    <path d="M4 18C4 15.79 7.58 14 12 14S20 15.79 20 18V20H4V18Z" fill="currentColor"/>
+    <circle cx="12" cy="7" r="4" fill="currentColor"/>
+    <path d="M12 14C16.42 14 20 15.79 20 18V20H4V18C4 15.79 7.58 14 12 14Z" fill="currentColor"/>
   </svg>
 );
 
