@@ -37,7 +37,6 @@ const WelcomePage: React.FC<{
       <div className="welcome-content">
         <div className="welcome-header">
           <div className="app-logo">
-            <CaniCoachMainLogo className="logo-icon" />
             <div className="logo-text">
               <span className="logo-cani">Cani</span>
               <span className="logo-coach">Coach</span>

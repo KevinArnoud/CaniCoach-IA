@@ -189,23 +189,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
   margin-bottom: 1.5rem;
-}
-
-.logo-icon {
-  width: 56px;
-  height: 56px;
-  color: var(--esprit-primary);
-  filter: drop-shadow(0 6px 12px rgba(59, 130, 246, 0.25));
 }
 
 .logo-text {
   display: flex;
   align-items: baseline;
-  font-size: 2.75rem;
+  font-size: 3.5rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+  justify-content: center;
+  text-align: center;
 }
 
 .logo-cani {
@@ -464,7 +458,7 @@
   }
   
   .logo-text {
-    font-size: 2.25rem;
+    font-size: 3rem;
   }
   
   .welcome-title {
@@ -504,7 +498,7 @@
   }
   
   .logo-text {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
   
   .btn-start-chat {
