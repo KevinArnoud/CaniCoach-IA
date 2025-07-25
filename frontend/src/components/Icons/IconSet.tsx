@@ -248,7 +248,18 @@ export const PawIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
     fill="currentColor" 
     className={className}
   >
-    <path d="M12 2C11.5 2 11 2.19 10.59 2.59L2.59 10.59C1.8 11.37 1.8 12.63 2.59 13.41L10.59 21.41C11.37 22.2 12.63 22.2 13.41 21.41L21.41 13.41C22.2 12.63 22.2 11.37 21.41 10.59L13.41 2.59C13 2.19 12.5 2 12 2M8.5 7C9.33 7 10 7.67 10 8.5S9.33 10 8.5 10 7 9.33 7 8.5 7.67 7 8.5 7M15.5 7C16.33 7 17 7.67 17 8.5S16.33 10 15.5 10 14 9.33 14 8.5 14.67 7 15.5 7M12 8.5C12.83 8.5 13.5 9.17 13.5 10S12.83 11.5 12 11.5 10.5 10.83 10.5 10 11.17 8.5 12 8.5M9.5 11.5C10.33 11.5 11 12.17 11 13S10.33 14.5 9.5 14.5 8 13.83 8 13 8.67 11.5 9.5 11.5M14.5 11.5C15.33 11.5 16 12.17 16 13S15.33 14.5 14.5 14.5 13 13.83 13 13 13.67 11.5 14.5 11.5M12 13C13.1 13 14 13.9 14 15S13.1 17 12 17 10 16.1 10 15 10.9 13 12 13Z"/>
+    {/* Icône moderne de suivi/progression */}
+    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
+    <path d="M8 12L11 15L16 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.2"/>
+    
+    {/* Indicateurs de progression autour */}
+    <circle cx="12" cy="4" r="1.5" fill="currentColor" opacity="0.6"/>
+    <circle cx="18.36" cy="7.64" r="1.5" fill="currentColor" opacity="0.7"/>
+    <circle cx="18.36" cy="16.36" r="1.5" fill="currentColor" opacity="0.8"/>
+    <circle cx="12" cy="20" r="1.5" fill="currentColor" opacity="0.9"/>
+    <circle cx="5.64" cy="16.36" r="1.5" fill="currentColor" opacity="0.8"/>
+    <circle cx="5.64" cy="7.64" r="1.5" fill="currentColor" opacity="0.7"/>
   </svg>
 );
 
