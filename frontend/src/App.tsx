@@ -1,62 +1,63 @@
 import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { AuthForm } from './components/Auth/AuthForm';
 import { ChatPage } from './components/Chat/ChatPage';
-import './components/Auth/Auth.css';
-import './styles/globals.css';
 import './App.css';
 
-// Composant principal de l'app (après connexion)
-const Dashboard: React.FC = () => {
-  const { user, signOut } = useAuth();
+const App: React.FC = () => {
   const [showChat, setShowChat] = useState(false);
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
-  // Si on veut voir le chat, on affiche le nouveau design
   if (showChat) {
-    return (
-      <ChatPage onBackClick={() => setShowChat(false)} />
-    );
+    return <ChatPage onBackClick={() => setShowChat(false)} />;
   }
 
-  // Sinon, on affiche l'ancien dashboard avec un bouton pour tester
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <div className="header-content">
-          <h1>🐕 CaniCoach IA</h1>
-          <div className="user-info">
-            <span>Bonjour {user?.email}</span>
-            <button onClick={handleSignOut} className="sign-out-btn">
-              Déconnexion
-            </button>
+    <div className="app">
+      <div className="container">
+        <header className="app-header">
+          <div className="logo-section">
+            <span className="logo">🐕</span>
+            <div>
+              <h1>CaniCoach IA</h1>
+              <p className="tagline">Éducation canine éthique</p>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="dashboard-main">
-        <div className="welcome-section">
-          <h2>Bienvenue dans CaniCoach IA ! 🎉</h2>
-          <p>Votre coach personnel pour l'éducation canine éthique</p>
-          
-          {/* Bouton pour tester le nouveau design */}
-          <div style={{ margin: '2rem 0' }}>
+        <main className="app-main">
+          <div className="welcome-card">
+            <h2>Bienvenue ! 🎉</h2>
+            <p>Votre coach personnel pour l'éducation canine bienveillante, basé sur les méthodes d'Esprit Dog.</p>
+            
             <button 
               onClick={() => setShowChat(true)}
-              className="btn btn-primary"
-              style={{ 
-                padding: '1rem 2rem',
-                fontSize: '1.1rem'
-              }}
+              className="btn btn-primary start-chat-btn"
             >
-              Essayer le nouveau chat
+              Commencer le chat
             </button>
           </div>
-        </div>
-      </main>
+
+          <div className="features-grid">
+            <div className="feature-card">
+              <span className="feature-icon">💬</span>
+              <h3>Chat IA personnalisé</h3>
+              <p>Conseils adaptés à votre chien</p>
+            </div>
+            
+            <div className="feature-card">
+              <span className="feature-icon">🎓</span>
+              <h3>Méthodes Esprit Dog</h3>
+              <p>Éducation positive et bienveillante</p>
+            </div>
+            
+            <div className="feature-card">
+              <span className="feature-icon">📱</span>
+              <h3>Disponible 24/7</h3>
+              <p>Votre coach toujours accessible</p>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default App;

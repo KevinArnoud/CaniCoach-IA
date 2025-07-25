@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -7,39 +7,10 @@
     <title>🐕 CaniCoach IA - Éducation Canine Éthique</title>
     <meta name="description" content="Votre coach personnel pour l'éducation canine éthique et bienveillante, basé sur les méthodes Esprit Dog" />
     <meta name="keywords" content="éducation canine, dressage chien, comportement canin, esprit dog, tony silvestre" />
-    <meta name="theme-color" content="#2563eb" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <style>
-      /* Loading screen */
-      #loading {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2rem;
-        z-index: 9999;
-      }
-    </style>
+    <meta name="theme-color" content="#007AFF" />
   </head>
   <body>
-    <div id="loading">🐕 Chargement de CaniCoach IA...</div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      // Remove loading screen when app loads
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          const loading = document.getElementById('loading');
-          if (loading) loading.style.display = 'none';
-        }, 1000);
-      });
-    </script>
   </body>
 </html>

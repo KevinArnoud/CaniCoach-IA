@@ -7,12 +7,11 @@ interface ChatPageProps {
 }
 
 export const ChatPage: React.FC<ChatPageProps> = ({ onBackClick }) => {
-  // Données de test - à remplacer par les vraies données plus tard
   const mockDogData = {
     name: "Rocky",
     breed: "Berger Australien", 
     age: "3 mois",
-    photoUrl: undefined // Pour l'instant on utilise l'emoji
+    photoUrl: undefined
   };
 
   return (
