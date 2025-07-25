@@ -1,36 +1,60 @@
-/* Design System CaniCoach IA */
+/* Design System CaniCoach IA - Version Professionnelle */
 
 :root {
-  /* Couleurs principales */
-  --primary-blue: #007AFF;
-  --primary-blue-dark: #0056CC;
-  --background-gray: #F2F2F7;
-  --white: #FFFFFF;
-  --text-primary: #000000;
-  --text-secondary: #8E8E93;
-  --message-user-bg: #2C2C2E;
-  --message-ai-bg: var(--primary-blue);
-  --border-light: #E5E5EA;
+  /* Couleurs principales - Palette professionnelle */
+  --primary-blue: #1E88E5;
+  --primary-blue-dark: #1565C0;
+  --primary-blue-light: #E3F2FD;
+  --secondary-blue: #42A5F5;
   
-  /* Espacements */
+  /* Couleurs neutres */
+  --white: #FFFFFF;
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #EEEEEE;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-500: #9E9E9E;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  
+  /* Couleurs de messages */
+  --message-user-bg: #1E88E5;
+  --message-ai-bg: #F5F5F5;
+  --message-ai-text: #212121;
+  
+  /* Espacements - Système 4px */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
+  --spacing-2xl: 48px;
   
   /* Border radius */
+  --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 20px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 50px;
   
   /* Ombres */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   
-  /* Fonts */
-  --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  /* Typography */
+  --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
 }
 
 /* Reset et base */
@@ -42,22 +66,25 @@
 
 body {
   font-family: var(--font-system);
-  background-color: var(--background-gray);
-  color: var(--text-primary);
+  background-color: var(--gray-50);
+  color: var(--gray-900);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: var(--font-size-base);
 }
 
-/* Classes utilitaires */
+/* Container principal */
 .container {
   max-width: 430px;
   margin: 0 auto;
   background: var(--white);
   min-height: 100vh;
   position: relative;
+  box-shadow: var(--shadow-lg);
 }
 
+/* Buttons */
 .btn {
   border: none;
   border-radius: var(--radius-md);
@@ -69,15 +96,61 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  text-decoration: none;
 }
 
 .btn-primary {
   background: var(--primary-blue);
   color: var(--white);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
   background: var(--primary-blue-dark);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  padding: calc(var(--spacing-md) - 2px) calc(var(--spacing-xl) - 2px);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-blue-light);
+}
+
+/* Utilitaires */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+
+.text-gray-500 { color: var(--gray-500); }
+.text-gray-600 { color: var(--gray-600); }
+.text-gray-700 { color: var(--gray-700); }
+.text-gray-800 { color: var(--gray-800); }
+.text-gray-900 { color: var(--gray-900); }
+
+/* Responsive */
+@media (max-width: 430px) {
+  .container {
+    max-width: 100%;
+    box-shadow: none;
+  }
 }

@@ -16,12 +16,10 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
   photoUrl,
   onBackClick
 }) => {
-  // Emoji par défaut si pas de photo
   const defaultEmoji = "🐕";
   
   return (
     <div className="dog-profile-header">
-      {/* Barre de statut et navigation */}
       <div className="status-bar">
         <div className="status-left">
           <span className="time">9:41</span>
@@ -41,7 +39,6 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
         </div>
       </div>
 
-      {/* Header principal */}
       <div className="header-main">
         <button className="back-button" onClick={onBackClick}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -53,29 +50,25 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
           <span className="app-name">CaniCoach IA</span>
         </div>
         
-        <div className="header-actions">
-          {/* Espace pour futurs boutons */}
-        </div>
+        <div className="header-actions"></div>
       </div>
 
-      {/* Profil du chien */}
-      <div className="dog-profile-main">
-        <div className="dog-avatar-large">
+      <div className="dog-profile-section">
+        <div className="dog-avatar">
           {photoUrl ? (
-            <img src={photoUrl} alt={dogName} className="dog-photo-large" />
+            <img src={photoUrl} alt={dogName} className="dog-photo" />
           ) : (
-            <div className="dog-emoji-large">{defaultEmoji}</div>
+            <div className="dog-emoji">{defaultEmoji}</div>
           )}
         </div>
         
-        <div className="dog-info-main">
-          <h1 className="dog-name-large">{dogName}</h1>
+        <div className="dog-info">
+          <h1 className="dog-name">{dogName}</h1>
           <p className="dog-details">{breed} • {age}</p>
         </div>
       </div>
 
-      {/* Mini profil pour le chat */}
-      <div className="dog-profile-mini">
+      <div className="chat-header-mini">
         <div className="dog-avatar-mini">
           {photoUrl ? (
             <img src={photoUrl} alt={dogName} className="dog-photo-mini" />
