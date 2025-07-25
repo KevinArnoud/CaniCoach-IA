@@ -52,7 +52,6 @@ const WelcomePage: React.FC<{
           
           <h1 className="welcome-title">
             Bienvenue ! 
-            <span className="celebration-icon">🎉</span>
           </h1>
           
           <p className="welcome-subtitle">
