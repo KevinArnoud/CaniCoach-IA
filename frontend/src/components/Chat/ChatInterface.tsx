@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSubscription } from '../../contexts/SubscriptionContext';
+import { PaywallModal } from '../Subscription/PaywallModal';
 import { SendIcon } from '../Icons/IconSet';
 import './ChatInterface.css';
 
@@ -72,6 +74,9 @@ const knowledgeBase = {
 };
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed, dogAge }) => {
+  const { canUseChat, markProblemResolved, trialProblemsResolved, maxTrialProblems, upgradeToSubscription } = useSubscription();
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [conversationCount, setConversationCount] = useState(0);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -83,6 +88,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [problemResolved, setProblemResolved] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -132,6 +138,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
+    // Vérifier si l'utilisateur peut utiliser le chat
+    if (!canUseChat && conversationCount > 0) {
+      setShowPaywall(true);
+      return;
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
@@ -142,6 +154,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
+    setConversationCount(prev => prev + 1);
 
     // Simulation de réflexion de l'IA
     setTimeout(() => {
@@ -157,13 +170,30 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
       
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
+      
+      // Marquer le problème comme potentiellement résolu après la première réponse complète
+      if (!problemResolved && conversationCount === 0) {
+        setTimeout(() => {
+          setProblemResolved(true);
+          markProblemResolved();
+          
+          // Afficher le paywall après un délai si c'est la fin de l'essai
+          if (!canUseChat) {
+            setTimeout(() => setShowPaywall(true), 2000);
+          }
+        }, 3000);
+      }
     }, 1500 + Math.random() * 1000); // Délai réaliste variable
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      if (canUseChat || conversationCount === 0) {
+        handleSendMessage();
+      } else {
+        setShowPaywall(true);
+      }
     }
   };
 
@@ -174,7 +204,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
       .replace(/\n/g, '<br />');
   };
 
+  const handleUpgrade = async (plan: 'monthly' | 'annual') => {
+    await upgradeToSubscription(plan);
+    setShowPaywall(false);
+  };
   return (
+    <>
     <div className="chat-interface">
       {/* Zone des messages */}
       <div className="messages-container">
@@ -230,7 +265,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
           
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isTyping}
+            disabled={!inputMessage.trim() || isTyping || (!canUseChat && conversationCount > 0)}
             className="send-button"
             title="Envoyer le message"
           >
@@ -240,36 +275,50 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
         
         {/* Suggestions rapides */}
         <div className="quick-suggestions">
+          {!canUseChat && conversationCount > 0 && (
+            <div className="trial-ended-notice">
+              <span>🔒 Essai gratuit terminé - Abonnez-vous pour continuer</span>
+            </div>
+          )}
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chiot mordille tout le temps')}
-            disabled={isTyping}
+            disabled={isTyping || (!canUseChat && conversationCount > 0)}
           >
             Mordillements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Problème de propreté')}
-            disabled={isTyping}
+            disabled={isTyping || (!canUseChat && conversationCount > 0)}
           >
             Propreté
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chien aboie beaucoup')}
-            disabled={isTyping}
+            disabled={isTyping || (!canUseChat && conversationCount > 0)}
           >
             Aboiements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Socialisation avec autres chiens')}
-            disabled={isTyping}
+            disabled={isTyping || (!canUseChat && conversationCount > 0)}
           >
             Socialisation
           </button>
         </div>
       </div>
     </div>
+    
+    <PaywallModal
+      isOpen={showPaywall}
+      onClose={() => setShowPaywall(false)}
+      onUpgrade={handleUpgrade}
+      trialProblemsUsed={trialProblemsResolved}
+      maxTrialProblems={maxTrialProblems}
+    />
+    </>
   );
 };

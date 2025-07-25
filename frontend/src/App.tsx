@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { AuthForm } from './components/Auth/AuthForm';
 import { ChatPage } from './components/Chat/ChatPage';
 import { DogProfileForm } from './components/DogProfile/DogProfileForm';
+import { UserProfile } from './components/Profile/UserProfile';
+import { ProgressJournal } from './components/Features/ProgressJournal';
+import { WeeklyChallenges } from './components/Features/WeeklyChallenges';
 import { DogIcon, MessageIcon, PawIcon, UserIcon } from './components/Icons/IconSet';
 import './components/Auth/Auth.css';
 import './App.css';
@@ -86,6 +90,12 @@ const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => vo
             </div>
             <h3 className="feature-title">Méthodes Esprit Dog</h3>
             <p className="feature-description">Éducation positive et bienveillante de Tony Silvestre</p>
+            <button 
+              className="btn btn-secondary btn-sm feature-button"
+              onClick={() => setShowWeeklyChallenges(true)}
+            >
+              Voir les défis
+            </button>
           </div>
 
           <div className="feature-card">
@@ -94,6 +104,12 @@ const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => vo
             </div>
             <h3 className="feature-title">Suivi personnalisé</h3>
             <p className="feature-description">Accompagnement adapté à chaque étape</p>
+            <button 
+              className="btn btn-secondary btn-sm feature-button"
+              onClick={() => setShowProgressJournal(true)}
+            >
+              Voir le journal
+            </button>
           </div>
         </div>
       </div>
@@ -105,6 +121,9 @@ const WelcomePage: React.FC<{ onStartChat: () => void; onCreateProfile: () => vo
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<'welcome' | 'profile' | 'chat'>('welcome');
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showProgressJournal, setShowProgressJournal] = useState(false);
+  const [showWeeklyChallenges, setShowWeeklyChallenges] = useState(false);
   const [dogProfile, setDogProfile] = useState<DogProfile | null>(null);
 
   const handleSignOut = async () => {
@@ -169,6 +188,13 @@ const Dashboard: React.FC = () => {
           <div className="header-actions">
             <span className="user-email">{user?.email}</span>
             <button 
+              onClick={() => setShowUserProfile(true)}
+              className="btn btn-ghost btn-sm"
+            >
+              <UserIcon size={16} />
+              Profil
+            </button>
+            <button 
               onClick={handleSignOut} 
               className="btn btn-ghost btn-sm"
             >
@@ -185,6 +211,24 @@ const Dashboard: React.FC = () => {
           onCreateProfile={() => setCurrentView('profile')}
         />
       </main>
+      
+      {showUserProfile && (
+        <UserProfile onClose={() => setShowUserProfile(false)} />
+      )}
+      
+      {showProgressJournal && (
+        <ProgressJournal 
+          onClose={() => setShowProgressJournal(false)}
+          dogName={dogProfile?.name || 'votre chien'}
+        />
+      )}
+      
+      {showWeeklyChallenges && (
+        <WeeklyChallenges 
+          onClose={() => setShowWeeklyChallenges(false)}
+          dogName={dogProfile?.name || 'votre chien'}
+        />
+      )}
     </div>
   );
 };
@@ -209,7 +253,13 @@ const AppContent: React.FC = () => {
     return <LoadingScreen />;
   }
 
-  return user ? <Dashboard /> : <AuthForm />;
+  return user ? (
+    <SubscriptionProvider>
+      <Dashboard />
+    </SubscriptionProvider>
+  ) : (
+    <AuthForm />
+  );
 };
 
 // App principale
