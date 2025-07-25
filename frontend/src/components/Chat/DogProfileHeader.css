@@ -1,87 +1,31 @@
-/* Dog Profile Header - Design professionnel */
+/* Header du chat - Style Esprit Dog avec titre complet */
 
 .dog-profile-header {
-  background: var(--primary-blue);
+  background: var(--esprit-primary, #2B5CE6);
   color: white;
   position: relative;
 }
 
-/* Status Bar iOS */
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  height: 44px;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.status-left {
-  flex: 1;
-}
-
-.status-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.notch {
-  width: 120px;
-  height: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 0 0 12px 12px;
-}
-
-.status-right {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-}
-
-.signal-bars {
-  display: flex;
-  gap: 2px;
-  align-items: end;
-}
-
-.bar {
-  width: 3px;
-  background: white;
-  border-radius: 1px;
-}
-
-.bar:nth-child(1) { height: 4px; }
-.bar:nth-child(2) { height: 6px; }
-.bar:nth-child(3) { height: 8px; }
-.bar:nth-child(4) { height: 10px; }
-
-/* Header principal */
+/* Header principal avec navigation */
 .header-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-md) var(--spacing-lg);
-  height: 56px;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .back-button {
   background: none;
   border: none;
   color: white;
-  padding: var(--spacing-sm);
+  padding: 0.5rem;
   cursor: pointer;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   transition: background 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
 }
 
 .back-button:hover {
@@ -91,44 +35,39 @@
 .header-title {
   flex: 1;
   text-align: center;
-  color: white;
+  padding: 0 1rem; /* Évite que le titre touche les bords */
 }
 
 .app-name {
-  font-size: var(--font-size-lg);
+  font-size: 1.125rem;
   font-weight: 600;
-  letter-spacing: -0.3px;
-  display: block;
-  color: var(--gray-900);
+  letter-spacing: -0.01em;
 }
 
-.app-name .highlight {
-  color: var(--primary-blue);
+.header-spacer {
+  width: 40px; /* Même largeur que le bouton retour pour centrer */
 }
 
-.header-actions {
-  width: 40px;
-}
-
-/* Profil du chien */
+/* Section profil du chien */
 .dog-profile-section {
-  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem 1.5rem;
   text-align: center;
-  background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
 }
 
 .dog-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.15);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-md);
+  margin-bottom: 1rem;
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: var(--shadow-lg);
+  border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 .dog-photo {
@@ -137,102 +76,59 @@
   object-fit: cover;
 }
 
-.dog-emoji {
-  font-size: 36px;
+.dog-icon-placeholder {
+  width: 50px;
+  height: 50px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .dog-info {
-  max-width: 300px;
-  margin: 0 auto;
+  max-width: 280px;
 }
 
 .dog-name {
-  font-size: var(--font-size-2xl);
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: var(--spacing-xs);
+  margin: 0 0 0.25rem 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  letter-spacing: -0.5px;
 }
 
 .dog-details {
-  font-size: var(--font-size-base);
+  font-size: 1rem;
   opacity: 0.9;
-  font-weight: 400;
-}
-
-/* Chat header mini */
-.chat-header-mini {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dog-avatar-mini {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-}
-
-.dog-photo-mini {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.dog-emoji-mini {
-  font-size: 18px;
-}
-
-.dog-info-mini {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.dog-name-mini {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  opacity: 0.95;
-  line-height: 1.2;
-}
-
-.dog-age-mini {
-  font-size: var(--font-size-xs);
-  opacity: 0.8;
-  line-height: 1.2;
+  font-weight: 500;
+  margin: 0;
 }
 
 /* Responsive */
 @media (max-width: 430px) {
+  .header-main {
+    padding: 0.75rem 1rem;
+  }
+  
+  .app-name {
+    font-size: 1rem;
+  }
+  
   .dog-profile-section {
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: 1.5rem 1rem 1rem;
   }
   
   .dog-avatar {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
   }
   
-  .dog-emoji {
-    font-size: 32px;
+  .dog-icon-placeholder {
+    width: 40px;
+    height: 40px;
   }
   
   .dog-name {
-    font-size: var(--font-size-xl);
+    font-size: 1.5rem;
   }
   
   .dog-details {
-    font-size: var(--font-size-sm);
+    font-size: 0.875rem;
   }
 }
