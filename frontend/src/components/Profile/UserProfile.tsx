@@ -10,7 +10,7 @@ interface UserProfileProps {
 
 export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
   const { user, signOut } = useAuth();
-  const { status, trialProblemsResolved, maxTrialProblems, resetTrial } = useSubscription();
+  const { status, trialTopic, resetTrial } = useSubscription();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const getStatusText = () => {
@@ -40,6 +40,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
       default:
         return 'status-unknown';
     }
+  };
+
+  const getTopicDisplayName = (topic: string | null): string => {
+    if (!topic) return 'Aucun sujet sélectionné';
+    const topicNames: { [key: string]: string } = {
+      'mordillements': 'Mordillements',
+      'proprete': 'Propreté', 
+      'aboiements': 'Aboiements',
+      'socialisation': 'Socialisation',
+      'general': 'Questions générales'
+    };
+    return topicNames[topic] || topic;
   };
 
   const handleSignOut = async () => {
@@ -91,23 +103,22 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
             
             {status === 'free_trial' && (
               <div className="trial-info">
-                <div className="trial-progress">
+                <div className="trial-topic-info">
                   <span className="trial-text">
-                    Problèmes résolus : {trialProblemsResolved}/{maxTrialProblems}
+                    Sujet d'essai : {getTopicDisplayName(trialTopic)}
                   </span>
-                  <div className="trial-bar">
-                    <div 
-                      className="trial-fill"
-                      style={{ width: `${(trialProblemsResolved / maxTrialProblems) * 100}%` }}
-                    />
-                  </div>
+                  {trialTopic && (
+                    <p className="trial-note">
+                      Vous pouvez poser des questions illimitées sur ce sujet. 
+                      Pour débloquer tous les sujets, abonnez-vous !
+                    </p>
+                  )}
+                  {!trialTopic && (
+                    <p className="trial-note">
+                      Posez votre première question pour commencer votre essai gratuit !
+                    </p>
+                  )}
                 </div>
-                
-                {trialProblemsResolved >= maxTrialProblems && (
-                  <p className="trial-ended">
-                    Votre essai gratuit est terminé. Abonnez-vous pour continuer !
-                  </p>
-                )}
               </div>
             )}
           </div>
