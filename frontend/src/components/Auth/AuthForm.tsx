@@ -39,7 +39,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         case 'signup':
           result = await signUp(email, password);
           if (!result.error) {
-            setMessage('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
+            setMessage('Inscription réussie ! Connexion automatique en mode développement.');
+            setTimeout(() => {
+              onSuccess?.();
+            }, 1000);
           }
           break;
           

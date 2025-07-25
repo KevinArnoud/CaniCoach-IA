@@ -2,6 +2,35 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { User, AuthError } from '@supabase/supabase-js';
 
+// Mock user for development mode
+const mockUser: User = {
+  id: 'dev-user-123',
+  email: 'test@canicoach.dev',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  aud: 'authenticated',
+  role: 'authenticated',
+  app_metadata: {},
+  user_metadata: {},
+  identities: [],
+  email_confirmed_at: new Date().toISOString(),
+  phone_confirmed_at: null,
+  confirmed_at: new Date().toISOString(),
+  last_sign_in_at: new Date().toISOString(),
+  recovery_sent_at: null,
+  new_email: null,
+  new_phone: null,
+  invited_at: null,
+  action_link: null,
+  email_change_sent_at: null,
+  phone_change_sent_at: null,
+  phone: null,
+  email_change_token_new: null,
+  email_change_token_current: null,
+  phone_change_token: null,
+  is_anonymous: false
+};
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -28,7 +57,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Check if Supabase client is available
     if (!supabase) {
-      console.warn('Supabase client not initialized. Please check your environment variables.');
+      console.warn('Supabase client not initialized. Using development mode with mock authentication.');
+      // In development mode, automatically sign in with mock user
+      setTimeout(() => {
+        setUser(mockUser);
+        setLoading(false);
+      }, 1000);
       setLoading(false);
       return;
     }
@@ -52,7 +86,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
-      return { error: { message: 'Supabase client not initialized' } as AuthError };
+      // Mock successful sign in for development
+      setTimeout(() => {
+        setUser(mockUser);
+      }, 500);
+      return { error: null };
     }
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -63,7 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string) => {
     if (!supabase) {
-      return { error: { message: 'Supabase client not initialized' } as AuthError };
+      // Mock successful sign up for development
+      setTimeout(() => {
+        setUser(mockUser);
+      }, 500);
+      return { error: null };
     }
     const { error } = await supabase.auth.signUp({
       email,
@@ -74,7 +116,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     if (!supabase) {
-      return { error: { message: 'Supabase client not initialized' } as AuthError };
+      // Mock sign out for development
+      setUser(null);
+      return { error: null };
     }
     const { error } = await supabase.auth.signOut();
     return { error };
@@ -82,7 +126,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     if (!supabase) {
-      return { error: { message: 'Supabase client not initialized' } as AuthError };
+      // Mock password reset for development
+      return { error: null };
     }
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     return { error };
