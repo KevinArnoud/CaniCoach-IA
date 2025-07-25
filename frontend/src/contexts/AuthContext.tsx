@@ -30,39 +30,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialisation simple au montage
+  // Initialisation UNIQUE au montage - PAS DE BOUCLE
   useEffect(() => {
-    console.log('AuthProvider: Initialisation');
-    // Vérifier s'il y a un utilisateur sauvegardé
-    const savedUser = localStorage.getItem('canicoach_user');
-    if (savedUser) {
+    console.log('AuthProvider: useEffect INIT - Une seule fois');
+    
+    const initAuth = () => {
       try {
-        const parsedUser = JSON.parse(savedUser);
-        console.log('AuthProvider: Utilisateur trouvé dans localStorage', parsedUser);
-        setUser(parsedUser);
+        const savedUser = localStorage.getItem('canicoach_user');
+        if (savedUser) {
+          const parsedUser = JSON.parse(savedUser);
+          console.log('AuthProvider: Utilisateur trouvé', parsedUser.email);
+          setUser(parsedUser);
+        } else {
+          console.log('AuthProvider: Aucun utilisateur sauvegardé');
+        }
       } catch (error) {
         console.error('AuthProvider: Erreur parsing user', error);
         localStorage.removeItem('canicoach_user');
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
-  }, []);
+    };
+
+    initAuth();
+  }, []); // TABLEAU VIDE = une seule fois au montage
 
   const signIn = async (email: string, password: string) => {
-    console.log('AuthProvider: signIn appelé', { email });
+    console.log('AuthProvider: signIn', email);
     try {
       setLoading(true);
       
-      // Simulation d'une connexion réussie en mode dev
       const userToSet = { ...mockUser, email };
-      
-      // Sauvegarder dans localStorage
       localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
-      
-      // Mettre à jour l'état
       setUser(userToSet);
       
-      console.log('AuthProvider: Connexion réussie', userToSet);
+      console.log('AuthProvider: Connexion réussie');
       return { error: null };
     } catch (error) {
       console.error('AuthProvider: Erreur signIn', error);
@@ -73,20 +75,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string) => {
-    console.log('AuthProvider: signUp appelé', { email });
+    console.log('AuthProvider: signUp', email);
     try {
       setLoading(true);
       
-      // Simulation d'une inscription réussie en mode dev
       const userToSet = { ...mockUser, email };
-      
-      // Sauvegarder dans localStorage
       localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
-      
-      // Mettre à jour l'état
       setUser(userToSet);
       
-      console.log('AuthProvider: Inscription réussie', userToSet);
+      console.log('AuthProvider: Inscription réussie');
       return { error: null };
     } catch (error) {
       console.error('AuthProvider: Erreur signUp', error);
@@ -97,14 +94,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    console.log('AuthProvider: signOut appelé');
+    console.log('AuthProvider: signOut');
     try {
       setLoading(true);
       
-      // Supprimer de localStorage
       localStorage.removeItem('canicoach_user');
-      
-      // Mettre à jour l'état
       setUser(null);
       
       console.log('AuthProvider: Déconnexion réussie');
@@ -118,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string) => {
-    console.log('AuthProvider: resetPassword appelé', { email });
+    console.log('AuthProvider: resetPassword', email);
     return { error: null };
   };
 
@@ -131,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     resetPassword,
   };
 
-  console.log('AuthProvider render - user:', user, 'loading:', loading);
+  console.log('AuthProvider render - user:', !!user, 'loading:', loading);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

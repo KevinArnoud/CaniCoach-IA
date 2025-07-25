@@ -9,20 +9,13 @@ interface ChatPageProps {
   age?: string;
 }
 
-export const ChatPage: React.FC<ChatPageProps> = ({ 
+export const ChatPage: React.FC<ChatPageProps> = React.memo(({ 
   onBackClick, 
   dogName = "votre chien", 
   breed = "Chien", 
   age = "Âge non spécifié" 
 }) => {
-  console.log('ChatPage render - props:', { dogName, breed, age });
-
-  const handleBackClick = () => {
-    console.log('ChatPage: Back button clicked');
-    if (onBackClick) {
-      onBackClick();
-    }
-  };
+  console.log('ChatPage render - dogName:', dogName);
 
   return (
     <div className="container">
@@ -31,7 +24,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         breed={breed}
         age={age}
         photoUrl={undefined}
-        onBackClick={handleBackClick}
+        onBackClick={onBackClick}
       />
       
       <ChatInterface 
@@ -41,4 +34,4 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       />
     </div>
   );
-};
+});

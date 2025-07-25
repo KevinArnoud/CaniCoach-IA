@@ -10,26 +10,24 @@ interface DogProfileHeaderProps {
   onBackClick?: () => void;
 }
 
-export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
+export const DogProfileHeader: React.FC<DogProfileHeaderProps> = React.memo(({
   dogName,
   breed,
   age,
   photoUrl,
   onBackClick
 }) => {
-  
-  const handleBackClick = () => {
-    console.log('DogProfileHeader: Back button clicked');
-    if (onBackClick) {
-      onBackClick();
-    }
-  };
+  console.log('DogProfileHeader render - dogName:', dogName);
   
   return (
     <div className="dog-profile-header">
       {/* Header avec titre complet visible */}
       <div className="header-main">
-        <button className="back-button" onClick={handleBackClick}>
+        <button 
+          className="back-button" 
+          onClick={onBackClick}
+          type="button"
+        >
           <ArrowLeftIcon size={20} />
         </button>
         
@@ -57,4 +55,4 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
       </div>
     </div>
   );
-};
+});

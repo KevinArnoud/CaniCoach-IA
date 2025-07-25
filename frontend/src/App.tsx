@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { AuthForm } from './components/Auth/AuthForm';
@@ -20,18 +20,20 @@ interface DogProfile {
   photoUrl?: string;
 }
 
-// Page d'accueil
+// Page d'accueil - STABLE
 const WelcomePage: React.FC<{ 
   onStartChat: () => void; 
   onCreateProfile: () => void;
   onShowProgressJournal: () => void;
   onShowWeeklyChallenges: () => void;
-}> = ({ 
+}> = React.memo(({ 
   onStartChat, 
   onCreateProfile,
   onShowProgressJournal,
   onShowWeeklyChallenges
 }) => {
+  console.log('WelcomePage render');
+  
   return (
     <div className="welcome-container">
       <div className="welcome-content">
@@ -118,39 +120,60 @@ const WelcomePage: React.FC<{
       </div>
     </div>
   );
-};
+});
 
-// Dashboard principal
+// Dashboard principal - STABILISÉ
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
+  
+  // États stables avec valeurs par défaut
   const [currentView, setCurrentView] = useState<'welcome' | 'profile' | 'chat'>('welcome');
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [showProgressJournal, setShowProgressJournal] = useState(false);
   const [showWeeklyChallenges, setShowWeeklyChallenges] = useState(false);
   const [dogProfile, setDogProfile] = useState<DogProfile | null>(null);
 
-  console.log('Dashboard render - currentView:', currentView);
-  const handleSignOut = async () => {
-    await signOut();
-  };
+  console.log('Dashboard render - currentView:', currentView, 'user:', user?.email);
 
-  const handleProfileSubmit = (profile: DogProfile) => {
-    console.log('Profile submitted:', profile);
+  // Handlers stables avec useCallback
+  const handleSignOut = useCallback(async () => {
+    console.log('Dashboard: handleSignOut');
+    await signOut();
+  }, [signOut]);
+
+  const handleProfileSubmit = useCallback((profile: DogProfile) => {
+    console.log('Dashboard: handleProfileSubmit', profile);
     setDogProfile(profile);
     setCurrentView('chat');
-  };
+  }, []);
 
-  const handleStartChat = () => {
-    console.log('Starting chat...');
+  const handleStartChat = useCallback(() => {
+    console.log('Dashboard: handleStartChat');
     setCurrentView('chat');
-  };
+  }, []);
 
-  const handleBackToWelcome = () => {
-    console.log('Back to welcome...');
+  const handleBackToWelcome = useCallback(() => {
+    console.log('Dashboard: handleBackToWelcome');
     setCurrentView('welcome');
-  };
+  }, []);
 
-  const calculateAge = (birthDate: string): string => {
+  const handleCreateProfile = useCallback(() => {
+    console.log('Dashboard: handleCreateProfile');
+    setCurrentView('profile');
+  }, []);
+
+  const handleShowProgressJournal = useCallback(() => {
+    console.log('Dashboard: handleShowProgressJournal');
+    setShowProgressJournal(true);
+  }, []);
+
+  const handleShowWeeklyChallenges = useCallback(() => {
+    console.log('Dashboard: handleShowWeeklyChallenges');
+    setShowWeeklyChallenges(true);
+  }, []);
+
+  // Fonction utilitaire stable
+  const calculateAge = useCallback((birthDate: string): string => {
     if (!birthDate) return '';
     
     const birth = new Date(birthDate);
@@ -168,13 +191,14 @@ const Dashboard: React.FC = () => {
       const remainingMonths = Math.floor((diffDays % 365) / 30);
       return `${years} an${years > 1 ? 's' : ''}${remainingMonths > 0 ? ` et ${remainingMonths} mois` : ''}`;
     }
-  };
+  }, []);
 
+  // Rendu conditionnel STABLE
   if (currentView === 'profile') {
     return (
       <DogProfileForm 
         onSubmit={handleProfileSubmit}
-        onSkip={() => setCurrentView('chat')}
+        onSkip={handleStartChat}
       />
     );
   }
@@ -190,6 +214,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  // Vue par défaut (welcome)
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -221,9 +246,9 @@ const Dashboard: React.FC = () => {
       <main className="dashboard-main">
         <WelcomePage 
           onStartChat={handleStartChat}
-          onCreateProfile={() => setCurrentView('profile')}
-          onShowProgressJournal={() => setShowProgressJournal(true)}
-          onShowWeeklyChallenges={() => setShowWeeklyChallenges(true)}
+          onCreateProfile={handleCreateProfile}
+          onShowProgressJournal={handleShowProgressJournal}
+          onShowWeeklyChallenges={handleShowWeeklyChallenges}
         />
       </main>
       
@@ -248,8 +273,8 @@ const Dashboard: React.FC = () => {
   );
 };
 
-// Composant de chargement
-const LoadingScreen: React.FC = () => (
+// Composant de chargement - STABLE
+const LoadingScreen: React.FC = React.memo(() => (
   <div className="loading-container">
     <div className="loading-content">
       <CaniCoachLogo size={48} className="loading-icon" />
@@ -258,14 +283,15 @@ const LoadingScreen: React.FC = () => (
       <div className="loading-spinner"></div>
     </div>
   </div>
-);
+));
 
-// Gestion de l'état d'authentification - SIMPLIFIÉ AU MAXIMUM
+// Gestion de l'état d'authentification - ULTRA STABLE
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
 
-  console.log('AppContent render - user:', user, 'loading:', loading);
+  console.log('AppContent render - user:', !!user, 'loading:', loading);
 
+  // Pas de changements d'état ici, juste du rendu conditionnel
   if (loading) {
     return <LoadingScreen />;
   }
@@ -281,8 +307,10 @@ const AppContent: React.FC = () => {
   );
 };
 
-// App principale
+// App principale - ULTRA SIMPLE
 const App: React.FC = () => {
+  console.log('App render');
+  
   return (
     <AuthProvider>
       <AppContent />
