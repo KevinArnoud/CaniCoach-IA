@@ -5,11 +5,11 @@ export type SubscriptionStatus = 'free_trial' | 'active_monthly' | 'active_annua
 
 interface SubscriptionContextType {
   status: SubscriptionStatus;
-  trialProblemsResolved: number;
-  maxTrialProblems: number;
+  trialTopic: string | null;
   canUseChat: boolean;
   upgradeToSubscription: (plan: 'monthly' | 'annual') => Promise<void>;
-  markProblemResolved: () => void;
+  setTrialTopic: (topic: string) => void;
+  isTopicAllowed: (topic: string) => boolean;
   resetTrial: () => void;
 }
 
@@ -26,25 +26,24 @@ export const useSubscription = () => {
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [status, setStatus] = useState<SubscriptionStatus>('free_trial');
-  const [trialProblemsResolved, setTrialProblemsResolved] = useState(0);
-  const maxTrialProblems = 1;
+  const [trialTopic, setTrialTopicState] = useState<string | null>(null);
 
   useEffect(() => {
     // En mode développement, simuler un essai gratuit
     if (user) {
       const savedStatus = localStorage.getItem(`subscription_${user.id}`);
-      const savedProblems = localStorage.getItem(`trial_problems_${user.id}`);
+      const savedTopic = localStorage.getItem(`trial_topic_${user.id}`);
       
       if (savedStatus) {
         setStatus(savedStatus as SubscriptionStatus);
       }
-      if (savedProblems) {
-        setTrialProblemsResolved(parseInt(savedProblems, 10));
+      if (savedTopic) {
+        setTrialTopicState(savedTopic);
       }
     }
   }, [user]);
 
-  const canUseChat = status !== 'free_trial' || trialProblemsResolved < maxTrialProblems;
+  const canUseChat = status !== 'free_trial' || true; // Toujours autorisé pour l'essai, la logique est dans le chat
 
   const upgradeToSubscription = async (plan: 'monthly' | 'annual') => {
     try {
@@ -60,33 +59,37 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   };
 
-  const markProblemResolved = () => {
-    if (status === 'free_trial') {
-      const newCount = trialProblemsResolved + 1;
-      setTrialProblemsResolved(newCount);
-      
+  const setTrialTopic = (topic: string) => {
+    if (status === 'free_trial' && !trialTopic) {
+      setTrialTopicState(topic);
       if (user) {
-        localStorage.setItem(`trial_problems_${user.id}`, newCount.toString());
+        localStorage.setItem(`trial_topic_${user.id}`, topic);
       }
     }
   };
 
+  const isTopicAllowed = (topic: string): boolean => {
+    if (status !== 'free_trial') return true; // Abonnés peuvent tout faire
+    if (!trialTopic) return true; // Premier sujet toujours autorisé
+    return topic === trialTopic; // Seul le sujet d'essai est autorisé
+  };
+
   const resetTrial = () => {
-    setTrialProblemsResolved(0);
+    setTrialTopicState(null);
     setStatus('free_trial');
     if (user) {
       localStorage.removeItem(`subscription_${user.id}`);
-      localStorage.removeItem(`trial_problems_${user.id}`);
+      localStorage.removeItem(`trial_topic_${user.id}`);
     }
   };
 
   const value = {
     status,
-    trialProblemsResolved,
-    maxTrialProblems,
+    trialTopic,
     canUseChat,
     upgradeToSubscription,
-    markProblemResolved,
+    setTrialTopic,
+    isTopicAllowed,
     resetTrial,
   };
 

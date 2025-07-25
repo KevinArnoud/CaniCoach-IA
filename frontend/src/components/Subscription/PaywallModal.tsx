@@ -6,19 +6,28 @@ interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpgrade: (plan: 'monthly' | 'annual') => void;
-  trialProblemsUsed: number;
-  maxTrialProblems: number;
+  currentTopic: string | null;
 }
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
   isOpen,
   onClose,
   onUpgrade,
-  trialProblemsUsed,
-  maxTrialProblems
+  currentTopic
 }) => {
   if (!isOpen) return null;
 
+  const getTopicDisplayName = (topic: string | null): string => {
+    if (!topic) return 'votre premier sujet';
+    const topicNames: { [key: string]: string } = {
+      'mordillements': 'les mordillements',
+      'proprete': 'la propreté',
+      'aboiements': 'les aboiements',
+      'socialisation': 'la socialisation',
+      'general': 'les questions générales'
+    };
+    return topicNames[topic] || topic;
+  };
   return (
     <div className="paywall-overlay">
       <div className="paywall-modal">
@@ -28,28 +37,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <DogIcon size={48} />
           </div>
           <h2 className="paywall-title">
-            Félicitations ! 🎉
+            Nouveau sujet détecté ! 🎯
           </h2>
           <p className="paywall-subtitle">
-            Vous avez résolu votre premier problème avec CaniCoach IA !
+            Vous avez exploré {getTopicDisplayName(currentTopic)} avec succès !
             <br />
-            Continuez votre parcours d'éducation canine bienveillante.
+            Pour débloquer tous les sujets, choisissez votre abonnement.
           </p>
-        </div>
-
-        {/* Progress */}
-        <div className="trial-progress">
-          <div className="progress-info">
-            <span className="progress-text">
-              Essai gratuit utilisé : {trialProblemsUsed}/{maxTrialProblems} problème
-            </span>
-          </div>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill"
-              style={{ width: `${(trialProblemsUsed / maxTrialProblems) * 100}%` }}
-            />
-          </div>
         </div>
 
         {/* Plans */}

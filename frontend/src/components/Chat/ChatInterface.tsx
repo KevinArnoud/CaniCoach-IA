@@ -74,9 +74,8 @@ const knowledgeBase = {
 };
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed, dogAge }) => {
-  const { canUseChat, markProblemResolved, trialProblemsResolved, maxTrialProblems, upgradeToSubscription } = useSubscription();
+  const { status, trialTopic, setTrialTopic, isTopicAllowed, upgradeToSubscription } = useSubscription();
   const [showPaywall, setShowPaywall] = useState(false);
-  const [conversationCount, setConversationCount] = useState(0);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -88,7 +87,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [problemResolved, setProblemResolved] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -99,25 +97,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
     scrollToBottom();
   }, [messages]);
 
-  const findBestResponse = (userMessage: string): any => {
+  const findBestResponse = (userMessage: string): { response: any; topic: string } => {
     const lowerMessage = userMessage.toLowerCase();
     
     for (const [topic, data] of Object.entries(knowledgeBase)) {
       if (data.keywords.some(keyword => lowerMessage.includes(keyword))) {
-        return data.response;
+        return { response: data.response, topic };
       }
     }
     
     // Réponse par défaut
     return {
-      validation: "Je comprends votre préoccupation. Chaque situation est unique et mérite une attention particulière.",
-      explanation: "Pour vous donner les meilleurs conseils, j'aimerais en savoir plus sur le comportement spécifique de votre chien.",
-      actionPlan: [
-        "**Décrivez la situation :** Pouvez-vous me donner plus de détails sur ce que fait exactement votre chien ?",
-        "**Contexte :** Dans quelles circonstances ce comportement se produit-il le plus souvent ?",
-        "**Fréquence :** Est-ce que cela arrive souvent ou occasionnellement ?",
-        "**Votre réaction :** Comment réagissez-vous habituellement dans ces moments ?"
-      ]
+      response: {
+        validation: "Je comprends votre préoccupation. Chaque situation est unique et mérite une attention particulière.",
+        explanation: "Pour vous donner les meilleurs conseils, j'aimerais en savoir plus sur le comportement spécifique de votre chien.",
+        actionPlan: [
+          "**Décrivez la situation :** Pouvez-vous me donner plus de détails sur ce que fait exactement votre chien ?",
+          "**Contexte :** Dans quelles circonstances ce comportement se produit-il le plus souvent ?",
+          "**Fréquence :** Est-ce que cela arrive souvent ou occasionnellement ?",
+          "**Votre réaction :** Comment réagissez-vous habituellement dans ces moments ?"
+        ]
+      },
+      topic: 'general'
     };
   };
 
@@ -138,12 +139,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
-    // Vérifier si l'utilisateur peut utiliser le chat
-    if (!canUseChat && conversationCount >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
@@ -154,13 +149,36 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
-    setConversationCount(prev => prev + 1);
 
     // Simulation de réflexion de l'IA
     setTimeout(() => {
-      const response = findBestResponse(inputMessage);
-      const formattedResponse = formatAIResponse(response);
+      const { response, topic } = findBestResponse(inputMessage);
       
+      // Vérifier si c'est un essai gratuit et si le sujet est autorisé
+      if (status === 'free_trial') {
+        if (!trialTopic) {
+          // Premier sujet - l'enregistrer
+          setTrialTopic(topic);
+        } else if (!isTopicAllowed(topic)) {
+          // Nouveau sujet non autorisé - déclencher le paywall
+          const paywallMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            type: 'ai',
+            content: "Je vois que vous souhaitez aborder un nouveau sujet. C'est une excellente idée pour continuer à progresser ! 🎯\n\nPour débloquer les conversations illimitées sur tous les sujets, je vous invite à choisir une de nos formules d'abonnement.\n\n✨ **Avec un abonnement, vous pourrez :**\n• Poser des questions sur tous les sujets\n• Accéder aux méthodes complètes d'Esprit Dog\n• Bénéficier d'un suivi personnalisé\n• Utiliser toutes les fonctionnalités avancées",
+            timestamp: new Date()
+          };
+          
+          setMessages(prev => [...prev, paywallMessage]);
+          setIsTyping(false);
+          
+          // Afficher le paywall après un délai
+          setTimeout(() => setShowPaywall(true), 1500);
+          return;
+        }
+      }
+      
+      // Réponse normale
+      const formattedResponse = formatAIResponse(response);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
@@ -170,30 +188,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
       
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
-      
-      // Marquer le problème comme potentiellement résolu après la première réponse complète
-      if (!problemResolved && conversationCount === 0) {
-        setTimeout(() => {
-          setProblemResolved(true);
-          markProblemResolved();
-          
-          // Afficher le paywall après un délai si c'est la fin de l'essai
-          if (!canUseChat) {
-            setTimeout(() => setShowPaywall(true), 2000);
-          }
-        }, 3000);
-      }
     }, 1500 + Math.random() * 1000); // Délai réaliste variable
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (canUseChat || conversationCount < 1) {
-        handleSendMessage();
-      } else {
-        setShowPaywall(true);
-      }
+      handleSendMessage();
     }
   };
 
@@ -207,6 +208,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   const handleUpgrade = async (plan: 'monthly' | 'annual') => {
     await upgradeToSubscription(plan);
     setShowPaywall(false);
+  };
+
+  const getTrialStatusMessage = () => {
+    if (status !== 'free_trial') return null;
+    if (!trialTopic) return "✨ Essai gratuit actif - Posez votre première question !";
+    return `🎯 Essai gratuit - Sujet actuel : ${getTopicDisplayName(trialTopic)}`;
+  };
+
+  const getTopicDisplayName = (topic: string): string => {
+    const topicNames: { [key: string]: string } = {
+      'mordillements': 'Mordillements',
+      'proprete': 'Propreté',
+      'aboiements': 'Aboiements',
+      'socialisation': 'Socialisation',
+      'general': 'Questions générales'
+    };
+    return topicNames[topic] || topic;
   };
   return (
     <>
@@ -265,7 +283,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
           
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isTyping || (!canUseChat && conversationCount >= 1)}
+            disabled={!inputMessage.trim() || isTyping}
             className="send-button"
             title="Envoyer le message"
           >
@@ -273,38 +291,40 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
           </button>
         </div>
         
+        {/* Statut de l'essai */}
+        {getTrialStatusMessage() && (
+          <div className="trial-status-message">
+            {getTrialStatusMessage()}
+          </div>
+        )}
+        
         {/* Suggestions rapides */}
         <div className="quick-suggestions">
-          {!canUseChat && conversationCount >= 1 && (
-            <div className="trial-ended-notice">
-              <span>🔒 Essai gratuit terminé - Abonnez-vous pour continuer</span>
-            </div>
-          )}
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chiot mordille tout le temps')}
-            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
+            disabled={isTyping}
           >
             Mordillements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Problème de propreté')}
-            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
+            disabled={isTyping}
           >
             Propreté
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chien aboie beaucoup')}
-            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
+            disabled={isTyping}
           >
             Aboiements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Socialisation avec autres chiens')}
-            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
+            disabled={isTyping}
           >
             Socialisation
           </button>
@@ -316,8 +336,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
       isOpen={showPaywall}
       onClose={() => setShowPaywall(false)}
       onUpgrade={handleUpgrade}
-      trialProblemsUsed={trialProblemsResolved}
-      maxTrialProblems={maxTrialProblems}
+      currentTopic={trialTopic}
     />
     </>
   );
