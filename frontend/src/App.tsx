@@ -1,135 +1,169 @@
-import { useEffect, useState } from 'react'
-import { supabase } from './lib/supabase'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
-function App() {
-  const [currentTime, setCurrentTime] = useState<string>('')
-  const [backendStatus, setBackendStatus] = useState<string>('⏳ Vérification...')
-
-  useEffect(() => {
-    setCurrentTime(new Date().toLocaleString('fr-FR'))
-    
-    // Test de connexion au backend
-    fetch('/api/health')
-      .then(res => res.json())
-      .then(() => setBackendStatus('✅ Connecté'))
-      .catch(() => setBackendStatus('⚠️ Déconnecté'))
-  }, [])
-
-  return (
-    <>
-      <div>
-        <div className="logo-container">
-          <h1 className="logo-text">🐕 CaniCoach IA</h1>
-          <p className="tagline">Votre coach personnel pour l'éducation canine éthique</p>
-          <p className="subtitle">Basé sur les méthodes d'éducation positive de Tony Silvestre (Esprit Dog)</p>
-        </div>
-      </div>
-      
-      <div className="card">
-        <h2>🚀 Statut du Projet</h2>
-        
-        <div className="status-grid">
-          <div className="status-item">
-            <strong>Frontend React/TypeScript:</strong> 
-            <span className="status-success">✅ Opérationnel</span>
-          </div>
-          
-          <div className="status-item">
-            <strong>Backend API:</strong> 
-            <span className={backendStatus.includes('✅') ? 'status-success' : 'status-warning'}>
-              {backendStatus}
-            </span>
-          </div>
-          
-          <div className="status-item">
-            <strong>PWA (Progressive Web App):</strong> 
-            <span className="status-success">✅ Configuré</span>
-          </div>
-          
-          <div className="status-item">
-            <strong>Supabase:</strong> 
-            <span className={supabase ? 'status-warning' : 'status-error'}>
-              {supabase ? '⚠️ Configuré (clés manquantes)' : '❌ À configurer'}
-            </span>
-          </div>
-
-          <div className="status-item">
-            <strong>Base de données:</strong> 
-            <span className="status-pending">🔄 Migrations prêtes</span>
-          </div>
-
-          <div className="status-item">
-            <strong>Dernière mise à jour:</strong> 
-            <span className="status-info">{currentTime}</span>
-          </div>
-        </div>
-      </div>
-      
-      <div className="card">
-        <h3>🎯 Prochaines étapes de développement</h3>
-        <div className="roadmap">
-          <div className="roadmap-item completed">
-            <span className="roadmap-icon">✅</span>
-            <div>
-              <strong>Infrastructure de base</strong>
-              <p>React + TypeScript + Vite + PWA</p>
-            </div>
-          </div>
-          
-          <div className="roadmap-item next">
-            <span className="roadmap-icon">🔄</span>
-            <div>
-              <strong>Configuration Supabase</strong>
-              <p>Base de données et authentification</p>
-            </div>
-          </div>
-          
-          <div className="roadmap-item pending">
-            <span className="roadmap-icon">⏳</span>
-            <div>
-              <strong>Interface de chat IA</strong>
-              <p>Conversation avec CaniCoach</p>
-            </div>
-          </div>
-          
-          <div className="roadmap-item pending">
-            <span className="roadmap-icon">⏳</span>
-            <div>
-              <strong>Gestion des profils chiens</strong>
-              <p>Création et modification des profils</p>
-            </div>
-          </div>
-          
-          <div className="roadmap-item pending">
-            <span className="roadmap-icon">⏳</span>
-            <div>
-              <strong>Système d'abonnement</strong>
-              <p>Intégration Stripe et gestion des paiements</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card info-card">
-        <h3>📋 Configuration requise</h3>
-        <div className="config-steps">
-          <p><strong>1.</strong> Créez un projet sur <a href="https://supabase.com" target=\"_blank">supabase.com</a></p>
-          <p><strong>2.</strong> Copiez vos clés dans <code>frontend/.env</code> et <code>backend/.env</code></p>
-          <p><strong>3.</strong> Exécutez les migrations SQL dans l'éditeur Supabase</p>
-          <p><strong>4.</strong> Démarrez le backend avec <code>cd backend && npm run dev</code></p>
-        </div>
-      </div>
-      
-      <footer className="app-footer">
-        <p>
-          🎉 <strong>CaniCoach IA</strong> - Éducation canine éthique et bienveillante
-          <br />
-          <small>Développé avec ❤️ pour renforcer la relation humain-chien</small>
-        </p>
-      </footer>
-    </>
-  )
+interface ServiceStatus {
+  name: string;
+  status: 'connected' | 'disconnected' | 'loading';
+  description: string;
 }
 
-export default App
+function App() {
+  const [services, setServices] = useState<ServiceStatus[]>([
+    { name: 'Frontend', status: 'connected', description: 'Interface utilisateur' },
+    { name: 'Backend API', status: 'loading', description: 'Serveur Express' },
+    { name: 'Supabase', status: 'disconnected', description: 'Base de données' },
+    { name: 'Authentification', status: 'disconnected', description: 'Système de connexion' }
+  ]);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulation du chargement initial
+    setTimeout(() => setIsLoading(false), 2000);
+    
+    // Test de connexion au backend
+    const testBackend = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/health');
+        if (response.ok) {
+          setServices(prev => prev.map(service => 
+            service.name === 'Backend API' 
+              ? { ...service, status: 'connected' }
+              : service
+          ));
+        }
+      } catch (error) {
+        setServices(prev => prev.map(service => 
+          service.name === 'Backend API' 
+            ? { ...service, status: 'disconnected' }
+            : service
+        ));
+      }
+    };
+
+    testBackend();
+  }, []);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'connected': return '✅';
+      case 'disconnected': return '❌';
+      case 'loading': return '⏳';
+      default: return '❓';
+    }
+  };
+
+  const roadmapItems = [
+    { step: 1, title: 'Infrastructure de base', status: 'completed', description: 'Frontend + Backend + Base de données' },
+    { step: 2, title: 'Authentification utilisateur', status: 'in-progress', description: 'Inscription, connexion, profils' },
+    { step: 3, title: 'Interface de chat IA', status: 'pending', description: 'Chat intelligent avec conseils personnalisés' },
+    { step: 4, title: 'Gestion des profils chiens', status: 'pending', description: 'Fiches détaillées des compagnons' },
+    { step: 5, title: 'Système d\'abonnement', status: 'pending', description: 'Intégration Stripe et plans premium' },
+    { step: 6, title: 'Base de connaissance', status: 'pending', description: 'Méthodes Esprit Dog intégrées' }
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-content">
+          <div className="logo-container">
+            <span className="logo">🐕</span>
+            <h1>CaniCoach IA</h1>
+          </div>
+          <div className="loading-spinner"></div>
+          <p>Initialisation de votre coach canin intelligent...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <span className="logo">🐕</span>
+            <div>
+              <h1>CaniCoach IA</h1>
+              <p className="tagline">Votre coach canin intelligent basé sur les méthodes Esprit Dog</p>
+            </div>
+          </div>
+          <div className="status-badge">
+            <span className="status-dot"></span>
+            En développement
+          </div>
+        </div>
+      </header>
+
+      <main className="main-content">
+        <section className="status-section">
+          <h2>🔍 Statut des Services</h2>
+          <div className="services-grid">
+            {services.map((service, index) => (
+              <div key={index} className={`service-card ${service.status}`}>
+                <div className="service-header">
+                  <span className="service-icon">{getStatusIcon(service.status)}</span>
+                  <h3>{service.name}</h3>
+                </div>
+                <p>{service.description}</p>
+                <div className="service-status">
+                  {service.status === 'connected' && 'Opérationnel'}
+                  {service.status === 'disconnected' && 'À configurer'}
+                  {service.status === 'loading' && 'Connexion...'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="roadmap-section">
+          <h2>🗺️ Roadmap de Développement</h2>
+          <div className="roadmap">
+            {roadmapItems.map((item, index) => (
+              <div key={index} className={`roadmap-item ${item.status}`}>
+                <div className="step-number">{item.step}</div>
+                <div className="step-content">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <div className="step-status">
+                    {item.status === 'completed' && '✅ Terminé'}
+                    {item.status === 'in-progress' && '🔄 En cours'}
+                    {item.status === 'pending' && '⏳ À venir'}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="config-section">
+          <h2>⚙️ Guide de Configuration</h2>
+          <div className="config-steps">
+            <div className="config-step">
+              <h3>1. Créer un projet Supabase</h3>
+              <p>Rendez-vous sur <a href="https://supabase.com" target="_blank" rel="noopener noreferrer">supabase.com</a> et créez un nouveau projet</p>
+            </div>
+            <div className="config-step">
+              <h3>2. Configurer les variables d'environnement</h3>
+              <p>Ajoutez vos clés Supabase dans les fichiers <code>.env</code></p>
+            </div>
+            <div className="config-step">
+              <h3>3. Exécuter les migrations</h3>
+              <p>Utilisez l'éditeur SQL de Supabase pour créer les tables</p>
+            </div>
+            <div className="config-step">
+              <h3>4. Démarrer le backend</h3>
+              <p>Lancez <code>cd backend && npm run dev</code> dans un terminal séparé</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="app-footer">
+        <p>© 2024 CaniCoach IA - Propulsé par les méthodes Esprit Dog 🐾</p>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
