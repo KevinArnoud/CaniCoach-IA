@@ -18,6 +18,7 @@ Stocke les informations des utilisateurs.
 ## Collection `dogs`
 Stocke les profils des chiens, liés à un utilisateur.
 ```json
+
 {
   "dogId": "string (unique)",
   "ownerId": "string (lien vers users.userId)",
