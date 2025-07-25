@@ -48,4 +48,13 @@ const Dashboard: React.FC = () => {
               onClick={() => setShowChat(true)}
               className="btn btn-primary"
               style={{ 
-                padding: '1rem 2rem
+                padding: '1rem 2rem',
+                fontSize: '1.1rem'
+              }}
+            >
+              Essayer le nouveau chat
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
