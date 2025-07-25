@@ -129,13 +129,25 @@ const Dashboard: React.FC = () => {
   const [showWeeklyChallenges, setShowWeeklyChallenges] = useState(false);
   const [dogProfile, setDogProfile] = useState<DogProfile | null>(null);
 
+  console.log('Dashboard render - currentView:', currentView);
   const handleSignOut = async () => {
     await signOut();
   };
 
   const handleProfileSubmit = (profile: DogProfile) => {
+    console.log('Profile submitted:', profile);
     setDogProfile(profile);
     setCurrentView('chat');
+  };
+
+  const handleStartChat = () => {
+    console.log('Starting chat...');
+    setCurrentView('chat');
+  };
+
+  const handleBackToWelcome = () => {
+    console.log('Back to welcome...');
+    setCurrentView('welcome');
   };
 
   const calculateAge = (birthDate: string): string => {
@@ -170,7 +182,7 @@ const Dashboard: React.FC = () => {
   if (currentView === 'chat') {
     return (
       <ChatPage 
-        onBackClick={() => setCurrentView('welcome')}
+        onBackClick={handleBackToWelcome}
         dogName={dogProfile?.name || 'votre chien'}
         breed={dogProfile?.breed || 'Chien'}
         age={dogProfile?.dateOfBirth ? calculateAge(dogProfile.dateOfBirth) : 'Âge non spécifié'}
@@ -208,7 +220,7 @@ const Dashboard: React.FC = () => {
 
       <main className="dashboard-main">
         <WelcomePage 
-          onStartChat={() => setCurrentView('chat')}
+          onStartChat={handleStartChat}
           onCreateProfile={() => setCurrentView('profile')}
           onShowProgressJournal={() => setShowProgressJournal(true)}
           onShowWeeklyChallenges={() => setShowWeeklyChallenges(true)}

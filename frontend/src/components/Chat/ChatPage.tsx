@@ -15,6 +15,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   breed = "Chien", 
   age = "Âge non spécifié" 
 }) => {
+  console.log('ChatPage render - props:', { dogName, breed, age });
+
+  const handleBackClick = () => {
+    console.log('ChatPage: Back button clicked');
+    if (onBackClick) {
+      onBackClick();
+    }
+  };
+
   return (
     <div className="container">
       <DogProfileHeader
@@ -22,7 +31,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
         breed={breed}
         age={age}
         photoUrl={undefined}
-        onBackClick={onBackClick}
+        onBackClick={handleBackClick}
       />
       
       <ChatInterface 

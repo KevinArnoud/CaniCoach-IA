@@ -18,11 +18,18 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
   onBackClick
 }) => {
   
+  const handleBackClick = () => {
+    console.log('DogProfileHeader: Back button clicked');
+    if (onBackClick) {
+      onBackClick();
+    }
+  };
+  
   return (
     <div className="dog-profile-header">
       {/* Header avec titre complet visible */}
       <div className="header-main">
-        <button className="back-button" onClick={onBackClick}>
+        <button className="back-button" onClick={handleBackClick}>
           <ArrowLeftIcon size={20} />
         </button>
         
