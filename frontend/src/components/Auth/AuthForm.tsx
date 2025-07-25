@@ -4,11 +4,7 @@ import { CaniCoachLogo, UserIcon, LockIcon, MailIcon } from '../Icons/IconSet';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
-interface AuthFormProps {
-  onSuccess?: () => void;
-}
-
-export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
+export const AuthForm: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +17,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation simple
     if (!email.trim()) {
       setError('Veuillez saisir votre email');
       return;
@@ -51,18 +46,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         case 'reset':
           result = await resetPassword(email);
           if (!result.error) {
-            setMessage('Email de réinitialisation envoyé ! Vérifiez votre boîte mail.');
+            setMessage('Email de réinitialisation envoyé !');
           }
           break;
       }
 
       if (result?.error) {
         setError('Erreur de connexion. Vérifiez vos identifiants.');
-      } else if (mode !== 'reset') {
-        setMessage('Connexion réussie !');
-        if (onSuccess) {
-          onSuccess();
-        }
       }
     } catch (err) {
       setError('Une erreur inattendue s\'est produite');
@@ -91,7 +81,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        {/* Logo Esprit Dog style */}
         <div className="auth-header">
           <div className="logo-container">
             <CaniCoachLogo className="logo-icon" />
@@ -225,7 +214,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           )}
         </div>
 
-        {/* Footer inspiré Esprit Dog */}
         <div className="auth-footer">
           <p className="footer-text">
             Basé sur les méthodes d'éducation positive de{' '}
