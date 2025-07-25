@@ -1,7 +1,7 @@
 {
-  "name": "doggy-daycare-ai",
+  "name": "canicoach-ia",
   "version": "1.0.0",
-  "description": "Application de garde de chiens avec IA",
+  "description": "Application CaniCoach IA - Éducation canine éthique",
   "main": "index.js",
   "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
@@ -13,8 +13,8 @@
     "start:frontend": "cd frontend && npm run preview",
     "start:backend": "cd backend && npm start"
   },
-  "keywords": ["doggy", "daycare", "ai", "react", "node"],
-  "author": "Votre nom",
+  "keywords": ["canicoach", "ia", "education", "canine", "react", "node"],
+  "author": "CaniCoach Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
