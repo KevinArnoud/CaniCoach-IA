@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DogIcon, UserIcon } from '../Icons/IconSet';
+import { CaniCoachMainLogo, UserIcon } from '../Icons/IconSet';
 import './DogProfileForm.css';
 
 interface DogProfile {
@@ -88,7 +88,7 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({
         return (
           <div className="form-step">
             <div className="step-header">
-              <DogIcon size={48} className="step-icon" />
+              <CaniCoachMainLogo size={48} className="step-icon" />
               <h2 className="step-title">Comment s'appelle votre compagnon ?</h2>
               <p className="step-description">
                 Donnez-nous le nom de votre chien pour personnaliser nos conseils
@@ -117,7 +117,7 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({
         return (
           <div className="form-step">
             <div className="step-header">
-              <DogIcon size={48} className="step-icon" />
+              <CaniCoachMainLogo size={48} className="step-icon" />
               <h2 className="step-title">Quelle est sa race ?</h2>
               <p className="step-description">
                 Connaître la race nous aide à adapter nos conseils aux spécificités de {profile.name}
@@ -145,7 +145,7 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({
         return (
           <div className="form-step">
             <div className="step-header">
-              <DogIcon size={48} className="step-icon" />
+              <CaniCoachMainLogo size={48} className="step-icon" />
               <h2 className="step-title">Quel âge a {profile.name} ?</h2>
               <p className="step-description">
                 L'âge est crucial pour adapter nos méthodes d'éducation
@@ -177,7 +177,7 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({
         return (
           <div className="form-step">
             <div className="step-header">
-              <DogIcon size={48} className="step-icon" />
+              <CaniCoachMainLogo size={48} className="step-icon" />
               <h2 className="step-title">Parlez-nous de {profile.name}</h2>
               <p className="step-description">
                 Ces informations nous aident à mieux comprendre votre situation (optionnel)
