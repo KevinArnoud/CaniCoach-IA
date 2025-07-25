@@ -49,14 +49,82 @@ const Dashboard: React.FC = () => {
               className="btn btn-primary"
               style={{ 
                 padding: '1rem 2rem',
-                fontSize: '1.1rem'
+                fontSize: '1.1rem',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #007AFF, #0056CC)',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
               }}
             >
-              Essayer le nouveau chat
+              🚀 Tester le nouveau design Chat
             </button>
+          </div>
+          
+          <div className="status-grid">
+            <div className="status-card">
+              <h3>🔐 Authentification</h3>
+              <span className="status-success">✅ Connecté</span>
+            </div>
+            
+            <div className="status-card">
+              <h3>🎨 Nouveau Design</h3>
+              <span className="status-success">✅ Prêt à tester</span>
+            </div>
+            
+            <div className="status-card">
+              <h3>💬 Chat IA</h3>
+              <span className="status-pending">🔄 Interface créée</span>
+            </div>
+            
+            <div className="status-card">
+              <h3>🐕 Profils chiens</h3>
+              <span className="status-pending">🔄 À développer</span>
+            </div>
+          </div>
+
+          <div className="next-steps">
+            <h3>🎯 Nouveau design disponible !</h3>
+            <ul>
+              <li>✅ Interface de chat moderne style iPhone</li>
+              <li>✅ Header avec profil du chien</li>
+              <li>✅ Messages avec bulles</li>
+              <li>✅ Design responsive et animé</li>
+              <li>🔄 Prochaine étape : vraie IA</li>
+            </ul>
           </div>
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
+
+// Composant pour gérer l'état d'authentification
+const AppContent: React.FC = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">
+          <h2>🐕 CaniCoach IA</h2>
+          <p>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return user ? <Dashboard /> : <AuthForm />;
+};
+
+// App principale avec provider
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+};
+
+export default App;
