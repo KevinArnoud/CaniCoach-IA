@@ -47,7 +47,7 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = ({
         </button>
         
         <div className="header-title">
-          <span className="app-name">CaniCoach IA</span>
+          <h1 className="app-name">CaniCoach IA</h1>
         </div>
         
         <div className="header-actions"></div>
