@@ -4,27 +4,32 @@ import { ChatInterface } from './ChatInterface';
 
 interface ChatPageProps {
   onBackClick?: () => void;
+  dogName?: string;
+  breed?: string;
+  age?: string;
 }
 
-export const ChatPage: React.FC<ChatPageProps> = ({ onBackClick }) => {
-  const mockDogData = {
-    name: "Rocky",
-    breed: "Berger Australien", 
-    age: "3 mois",
-    photoUrl: undefined
-  };
-
+export const ChatPage: React.FC<ChatPageProps> = ({ 
+  onBackClick, 
+  dogName = "votre chien", 
+  breed = "Chien", 
+  age = "Âge non spécifié" 
+}) => {
   return (
     <div className="container">
       <DogProfileHeader
-        dogName={mockDogData.name}
-        breed={mockDogData.breed}
-        age={mockDogData.age}
-        photoUrl={mockDogData.photoUrl}
+        dogName={dogName}
+        breed={breed}
+        age={age}
+        photoUrl={undefined}
         onBackClick={onBackClick}
       />
       
-      <ChatInterface dogName={mockDogData.name} />
+      <ChatInterface 
+        dogName={dogName} 
+        dogBreed={breed}
+        dogAge={age}
+      />
     </div>
   );
 };
