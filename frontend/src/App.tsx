@@ -1,64 +1,62 @@
-import { useEffect, useState } from 'react'
-import { supabase } from './lib/supabase'
-import './App.css'
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthForm } from './components/Auth/AuthForm';
+import { ChatPage } from './components/Chat/ChatPage';
+import './components/Auth/Auth.css';
+import './styles/globals.css';
+import './App.css';
 
-function App() {
-  const [currentTime, setCurrentTime] = useState<string>('')
+// Composant principal de l'app (après connexion)
+const Dashboard: React.FC = () => {
+  const { user, signOut } = useAuth();
+  const [showChat, setShowChat] = useState(false);
 
-  useEffect(() => {
-    setCurrentTime(new Date().toLocaleString('fr-FR'))
-  }, [])
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
+  // Si on veut voir le chat, on affiche le nouveau design
+  if (showChat) {
+    return (
+      <ChatPage onBackClick={() => setShowChat(false)} />
+    );
+  }
+
+  // Sinon, on affiche l'ancien dashboard avec un bouton pour tester
   return (
-    <>
-      <div>
-        <div className="logo-container">
-          <h1 className="logo-text">🐕 CaniCoach IA</h1>
-          <p className="tagline">Votre coach personnel pour l'éducation canine éthique</p>
+    <div className="dashboard">
+      <header className="dashboard-header">
+        <div className="header-content">
+          <h1>🐕 CaniCoach IA</h1>
+          <div className="user-info">
+            <span>Bonjour {user?.email}</span>
+            <button onClick={handleSignOut} className="sign-out-btn">
+              Déconnexion
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <div className="card">
-        <h2>🚀 Statut du Projet</h2>
-        
-        <div className="status-item">
-          <strong>Frontend React/TypeScript:</strong> ✅ Opérationnel
-        </div>
-        
-        <div className="status-item">
-          <strong>Interface utilisateur:</strong> ✅ Prête
-        </div>
-        
-        <div className="status-item">
-          <strong>Supabase:</strong> {supabase ? '✅ Client configuré' : '⚠️ À configurer'}
-        </div>
+      </header>
 
-        <div className="status-item">
-          <strong>Dernière mise à jour:</strong> {currentTime}
+      <main className="dashboard-main">
+        <div className="welcome-section">
+          <h2>Bienvenue dans CaniCoach IA ! 🎉</h2>
+          <p>Votre coach personnel pour l'éducation canine éthique</p>
+          
+          {/* Bouton pour tester le nouveau design */}
+          <div style={{ margin: '2rem 0' }}>
+            <button 
+              onClick={() => setShowChat(true)}
+              className="btn btn-primary"
+              style={{ 
+                padding: '1rem 2rem',
+                fontSize: '1.1rem'
+              }}
+            >
+              Essayer le nouveau chat
+            </button>
+          </div>
         </div>
-
-        <div className="status-item">
-          <strong>🎨 Nouveau design:</strong> 🔄 En cours de création
-        </div>
-      </div>
-      
-      <div className="card">
-        <h3>🎯 Prochaines étapes</h3>
-        <ul style={{ textAlign: 'left', maxWidth: '600px', margin: '0 auto' }}>
-          <li>✅ Design system créé</li>
-          <li>🔄 Création des composants d'authentification</li>
-          <li>🔄 Interface de chat moderne</li>
-          <li>🔄 Gestion des profils de chiens</li>
-        </ul>
-      </div>
-      
-      <p className="read-the-docs">
-        🎉 On avance bien ! Le nouveau design arrive bientôt ! 
-        <br />
-        Basé sur les méthodes d'éducation positive de Tony Silvestre (Esprit Dog)
-      </p>
-    </>
+      </main>
+    </div>
   )
 }
-
-export default App
