@@ -139,7 +139,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
     if (!inputMessage.trim()) return;
 
     // Vérifier si l'utilisateur peut utiliser le chat
-    if (!canUseChat && conversationCount > 0) {
+    if (!canUseChat && conversationCount >= 1) {
       setShowPaywall(true);
       return;
     }
@@ -189,7 +189,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (canUseChat || conversationCount === 0) {
+      if (canUseChat || conversationCount < 1) {
         handleSendMessage();
       } else {
         setShowPaywall(true);
@@ -265,7 +265,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
           
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isTyping || (!canUseChat && conversationCount > 0)}
+            disabled={!inputMessage.trim() || isTyping || (!canUseChat && conversationCount >= 1)}
             className="send-button"
             title="Envoyer le message"
           >
@@ -275,7 +275,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
         
         {/* Suggestions rapides */}
         <div className="quick-suggestions">
-          {!canUseChat && conversationCount > 0 && (
+          {!canUseChat && conversationCount >= 1 && (
             <div className="trial-ended-notice">
               <span>🔒 Essai gratuit terminé - Abonnez-vous pour continuer</span>
             </div>
@@ -283,28 +283,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ dogName, dogBreed,
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chiot mordille tout le temps')}
-            disabled={isTyping || (!canUseChat && conversationCount > 0)}
+            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
           >
             Mordillements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Problème de propreté')}
-            disabled={isTyping || (!canUseChat && conversationCount > 0)}
+            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
           >
             Propreté
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Mon chien aboie beaucoup')}
-            disabled={isTyping || (!canUseChat && conversationCount > 0)}
+            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
           >
             Aboiements
           </button>
           <button 
             className="suggestion-chip"
             onClick={() => setInputMessage('Socialisation avec autres chiens')}
-            disabled={isTyping || (!canUseChat && conversationCount > 0)}
+            disabled={isTyping || (!canUseChat && conversationCount >= 1)}
           >
             Socialisation
           </button>

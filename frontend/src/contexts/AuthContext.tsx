@@ -32,17 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialisation UNIQUE au montage - PAS DE BOUCLE
   useEffect(() => {
-    console.log('AuthProvider: useEffect INIT - Une seule fois');
-    
     const initAuth = () => {
       try {
         const savedUser = localStorage.getItem('canicoach_user');
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
-          console.log('AuthProvider: Utilisateur trouvé', parsedUser.email);
           setUser(parsedUser);
-        } else {
-          console.log('AuthProvider: Aucun utilisateur sauvegardé');
         }
       } catch (error) {
         console.error('AuthProvider: Erreur parsing user', error);
@@ -56,15 +51,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []); // TABLEAU VIDE = une seule fois au montage
 
   const signIn = async (email: string, password: string) => {
-    console.log('AuthProvider: signIn', email);
     try {
       setLoading(true);
+      
+      // Simulation d'un délai réseau
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const userToSet = { ...mockUser, email };
       localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
       setUser(userToSet);
       
-      console.log('AuthProvider: Connexion réussie');
       return { error: null };
     } catch (error) {
       console.error('AuthProvider: Erreur signIn', error);
@@ -75,15 +71,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string) => {
-    console.log('AuthProvider: signUp', email);
     try {
       setLoading(true);
+      
+      // Simulation d'un délai réseau
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const userToSet = { ...mockUser, email };
       localStorage.setItem('canicoach_user', JSON.stringify(userToSet));
       setUser(userToSet);
       
-      console.log('AuthProvider: Inscription réussie');
       return { error: null };
     } catch (error) {
       console.error('AuthProvider: Erreur signUp', error);
@@ -94,14 +91,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    console.log('AuthProvider: signOut');
     try {
       setLoading(true);
       
       localStorage.removeItem('canicoach_user');
       setUser(null);
       
-      console.log('AuthProvider: Déconnexion réussie');
       return { error: null };
     } catch (error) {
       console.error('AuthProvider: Erreur signOut', error);
@@ -112,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string) => {
-    console.log('AuthProvider: resetPassword', email);
+    // Simulation pour le mode développement
     return { error: null };
   };
 
@@ -124,8 +119,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     resetPassword,
   };
-
-  console.log('AuthProvider render - user:', !!user, 'loading:', loading);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

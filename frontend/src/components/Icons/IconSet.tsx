@@ -55,63 +55,64 @@ export const CaniCoachLogo: React.FC<IconProps> = ({ className = '', size = 24 }
     fill="none" 
     className={className}
   >
-    {/* Chien sportif avec bandeau */}
+    {/* Chien sportif moderne */}
     <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.1"/>
     
-    {/* Bandeau sportif */}
-    <ellipse cx="20" cy="12" rx="12" ry="3" fill="currentColor" opacity="0.8"/>
-    <ellipse cx="20" cy="12" rx="10" ry="2" fill="white" opacity="0.3"/>
+    {/* Casquette sportive */}
+    <path d="M8 14C8 10 12 8 20 8C28 8 32 10 32 14V16H8V14Z" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="20" cy="8" rx="14" ry="4" fill="currentColor" opacity="0.7"/>
+    <path d="M6 16C6 15 7 14 8 14H32C33 14 34 15 34 16C34 17 33 18 32 18H8C7 18 6 17 6 16Z" fill="currentColor" opacity="0.8"/>
     
-    {/* Tête de chien sportif */}
-    <ellipse cx="20" cy="16" rx="10" ry="8" fill="currentColor" opacity="0.15"/>
+    {/* Tête de chien athlétique */}
+    <ellipse cx="20" cy="18" rx="11" ry="9" fill="currentColor" opacity="0.15"/>
     <path 
-      d="M20 8C24.5 8 28 10.5 28 14C28 16.5 27 18.5 25.2 20L23 22C22.4 22.6 21.6 22.6 21 22L20 20.5L19 22C18.4 22.6 17.6 22.6 17 22L14.8 20C13 18.5 12 16.5 12 14C12 10.5 15.5 8 20 8Z" 
+      d="M20 10C25 10 29 12 29 16C29 19 28 21 26 23L24 25C23.2 25.8 22.8 25.8 22 25L20 22L18 25C17.2 25.8 16.8 25.8 16 25L14 23C12 21 11 19 11 16C11 12 15 10 20 10Z" 
       fill="currentColor"
     />
     
-    {/* Oreilles dressées sportives */}
-    <ellipse cx="14" cy="11" rx="2.5" ry="4" fill="currentColor" opacity="0.95" transform="rotate(-15 14 11)"/>
-    <ellipse cx="26" cy="11" rx="2.5" ry="4" fill="currentColor" opacity="0.95" transform="rotate(15 26 11)"/>
+    {/* Oreilles dressées d'athlète */}
+    <ellipse cx="13" cy="13" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(-20 13 13)"/>
+    <ellipse cx="27" cy="13" rx="3" ry="5" fill="currentColor" opacity="0.95" transform="rotate(20 27 13)"/>
     {/* Intérieur des oreilles */}
-    <ellipse cx="14.5" cy="11.5" rx="1.2" ry="2.5" fill="currentColor" opacity="0.6" transform="rotate(-15 14.5 11.5)"/>
-    <ellipse cx="25.5" cy="11.5" rx="1.2" ry="2.5" fill="currentColor" opacity="0.6" transform="rotate(15 25.5 11.5)"/>
+    <ellipse cx="13.5" cy="13.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(-20 13.5 13.5)"/>
+    <ellipse cx="26.5" cy="13.5" rx="1.5" ry="3" fill="currentColor" opacity="0.6" transform="rotate(20 26.5 13.5)"/>
     
-    {/* Yeux déterminés et sportifs */}
-    <circle cx="17" cy="15" r="1.8" fill="white"/>
-    <circle cx="23" cy="15" r="1.8" fill="white"/>
-    <circle cx="17" cy="15" r="1" fill="currentColor"/>
-    <circle cx="23" cy="15" r="1" fill="currentColor"/>
+    {/* Yeux déterminés de champion */}
+    <circle cx="16" cy="17" r="2" fill="white"/>
+    <circle cx="24" cy="17" r="2" fill="white"/>
+    <circle cx="16" cy="17" r="1.2" fill="currentColor"/>
+    <circle cx="24" cy="17" r="1.2" fill="currentColor"/>
     {/* Reflets déterminés */}
-    <circle cx="17.4" cy="14.6" r="0.4" fill="white"/>
-    <circle cx="23.4" cy="14.6" r="0.4" fill="white"/>
+    <circle cx="16.5" cy="16.5" r="0.5" fill="white"/>
+    <circle cx="24.5" cy="16.5" r="0.5" fill="white"/>
     
-    {/* Museau sportif avec sourire confiant */}
-    <ellipse cx="20" cy="18" rx="3" ry="2.5" fill="currentColor" opacity="0.8"/>
-    {/* Truffe noire sportive */}
-    <ellipse cx="20" cy="17.5" rx="1.2" ry="1" fill="currentColor"/>
+    {/* Museau d'athlète avec sourire confiant */}
+    <ellipse cx="20" cy="20" rx="3.5" ry="3" fill="currentColor" opacity="0.8"/>
+    {/* Truffe noire d'athlète */}
+    <ellipse cx="20" cy="19.5" rx="1.5" ry="1.2" fill="currentColor"/>
     {/* Sourire confiant de sportif */}
-    <path d="M17.5 19C18.5 20.2 19.5 20.5 20 20.5C20.5 20.5 21.5 20.2 22.5 19" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-    {/* Langue sportive qui dépasse */}
-    <ellipse cx="20" cy="21" rx="1" ry="0.6" fill="#ff6b9d" opacity="0.9"/>
+    <path d="M16.5 21C17.5 22.5 18.5 23 20 23C21.5 23 22.5 22.5 23.5 21" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+    {/* Langue d'athlète qui dépasse */}
+    <ellipse cx="20" cy="23.5" rx="1.2" ry="0.8" fill="#ff6b9d" opacity="0.9"/>
     
-    {/* Corps athlétique */}
+    {/* Corps musclé d'athlète */}
     <path 
-      d="M12 24C12 24 16 25.5 20 25.5C24 25.5 28 24 28 24V32C28 33.1 27.1 34 26 34H14C12.9 34 12 33.1 12 32V24Z" 
+      d="M11 26C11 26 15 28 20 28C25 28 29 26 29 26V35C29 36.1 28.1 37 27 37H13C11.9 37 11 36.1 11 35V26Z" 
       fill="currentColor" 
       opacity="0.7"
     />
     
-    {/* Pattes musclées */}
-    <ellipse cx="16" cy="34" rx="1.5" ry="2" fill="currentColor" opacity="0.9"/>
-    <ellipse cx="24" cy="34" rx="1.5" ry="2" fill="currentColor" opacity="0.9"/>
+    {/* Pattes puissantes d'athlète */}
+    <ellipse cx="15" cy="37" rx="2" ry="2.5" fill="currentColor" opacity="0.9"/>
+    <ellipse cx="25" cy="37" rx="2" ry="2.5" fill="currentColor" opacity="0.9"/>
     
-    {/* Queue dynamique de sportif */}
-    <path d="M28 26C29.5 25 31.5 24.5 33 26.5C33.8 27.5 33.2 29 32 29C30.5 29 29 28 28 26Z" fill="currentColor" opacity="0.8"/>
+    {/* Queue dynamique de champion */}
+    <path d="M29 28C31 27 33.5 26.5 35 29C36 30.5 35.2 32 33.5 32C31.5 32 30 30 29 28Z" fill="currentColor" opacity="0.8"/>
     
-    {/* Médaille de champion (optionnel) */}
-    <circle cx="20" cy="28" r="2" fill="#FFD700" opacity="0.8"/>
-    <circle cx="20" cy="28" r="1.2" fill="#FFA500" opacity="0.9"/>
-    <text x="20" y="29.5" textAnchor="middle" fontSize="2" fill="white" fontWeight="bold">1</text>
+    {/* Médaille de champion */}
+    <circle cx="20" cy="30" r="2.5" fill="#FFD700" opacity="0.9"/>
+    <circle cx="20" cy="30" r="1.8" fill="#FFA500" opacity="0.95"/>
+    <text x="20" y="31.5" textAnchor="middle" fontSize="2.5" fill="white" fontWeight="bold">🏆</text>
     
     {/* Définition du gradient */}
     <defs>

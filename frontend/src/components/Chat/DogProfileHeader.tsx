@@ -17,8 +17,6 @@ export const DogProfileHeader: React.FC<DogProfileHeaderProps> = React.memo(({
   photoUrl,
   onBackClick
 }) => {
-  console.log('DogProfileHeader render - dogName:', dogName);
-  
   return (
     <div className="dog-profile-header">
       {/* Header avec titre complet visible */}

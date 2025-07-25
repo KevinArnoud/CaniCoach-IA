@@ -47,12 +47,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const canUseChat = status !== 'free_trial' || trialProblemsResolved < maxTrialProblems;
 
   const upgradeToSubscription = async (plan: 'monthly' | 'annual') => {
-    // Simulation de l'upgrade en mode développement
-    const newStatus = plan === 'monthly' ? 'active_monthly' : 'active_annual';
-    setStatus(newStatus);
-    
-    if (user) {
-      localStorage.setItem(`subscription_${user.id}`, newStatus);
+    try {
+      // Simulation de l'upgrade en mode développement
+      const newStatus = plan === 'monthly' ? 'active_monthly' : 'active_annual';
+      setStatus(newStatus);
+      
+      if (user) {
+        localStorage.setItem(`subscription_${user.id}`, newStatus);
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'upgrade:', error);
     }
   };
 

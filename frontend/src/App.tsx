@@ -32,8 +32,6 @@ const WelcomePage: React.FC<{
   onShowProgressJournal,
   onShowWeeklyChallenges
 }) => {
-  console.log('WelcomePage render');
-  
   return (
     <div className="welcome-container">
       <div className="welcome-content">
@@ -53,7 +51,7 @@ const WelcomePage: React.FC<{
           </div>
           
           <h1 className="welcome-title">
-            Bienvenue ! 
+            Bienvenue !
           </h1>
           
           <p className="welcome-subtitle">
@@ -133,42 +131,33 @@ const Dashboard: React.FC = () => {
   const [showWeeklyChallenges, setShowWeeklyChallenges] = useState(false);
   const [dogProfile, setDogProfile] = useState<DogProfile | null>(null);
 
-  console.log('Dashboard render - currentView:', currentView, 'user:', user?.email);
-
   // Handlers stables avec useCallback
   const handleSignOut = useCallback(async () => {
-    console.log('Dashboard: handleSignOut');
     await signOut();
   }, [signOut]);
 
   const handleProfileSubmit = useCallback((profile: DogProfile) => {
-    console.log('Dashboard: handleProfileSubmit', profile);
     setDogProfile(profile);
     setCurrentView('chat');
   }, []);
 
   const handleStartChat = useCallback(() => {
-    console.log('Dashboard: handleStartChat');
     setCurrentView('chat');
   }, []);
 
   const handleBackToWelcome = useCallback(() => {
-    console.log('Dashboard: handleBackToWelcome');
     setCurrentView('welcome');
   }, []);
 
   const handleCreateProfile = useCallback(() => {
-    console.log('Dashboard: handleCreateProfile');
     setCurrentView('profile');
   }, []);
 
   const handleShowProgressJournal = useCallback(() => {
-    console.log('Dashboard: handleShowProgressJournal');
     setShowProgressJournal(true);
   }, []);
 
   const handleShowWeeklyChallenges = useCallback(() => {
-    console.log('Dashboard: handleShowWeeklyChallenges');
     setShowWeeklyChallenges(true);
   }, []);
 
@@ -289,8 +278,6 @@ const LoadingScreen: React.FC = React.memo(() => (
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
 
-  console.log('AppContent render - user:', !!user, 'loading:', loading);
-
   // Pas de changements d'état ici, juste du rendu conditionnel
   if (loading) {
     return <LoadingScreen />;
@@ -309,8 +296,6 @@ const AppContent: React.FC = () => {
 
 // App principale - ULTRA SIMPLE
 const App: React.FC = () => {
-  console.log('App render');
-  
   return (
     <AuthProvider>
       <AppContent />

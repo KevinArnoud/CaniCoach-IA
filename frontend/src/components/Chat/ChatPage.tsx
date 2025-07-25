@@ -15,8 +15,6 @@ export const ChatPage: React.FC<ChatPageProps> = React.memo(({
   breed = "Chien", 
   age = "Âge non spécifié" 
 }) => {
-  console.log('ChatPage render - dogName:', dogName);
-
   return (
     <div className="container">
       <DogProfileHeader

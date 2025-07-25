@@ -17,8 +17,6 @@ export const AuthForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('AuthForm: handleSubmit appelé', { mode, email });
-    
     if (!email.trim()) {
       setError('Veuillez saisir votre email');
       return;
@@ -38,17 +36,14 @@ export const AuthForm: React.FC = () => {
       
       switch (mode) {
         case 'signin':
-          console.log('AuthForm: Tentative de connexion');
           result = await signIn(email, password);
           break;
           
         case 'signup':
-          console.log('AuthForm: Tentative d\'inscription');
           result = await signUp(email, password);
           break;
           
         case 'reset':
-          console.log('AuthForm: Tentative de reset');
           result = await resetPassword(email);
           if (!result.error) {
             setMessage('Email de réinitialisation envoyé !');
@@ -57,10 +52,7 @@ export const AuthForm: React.FC = () => {
       }
 
       if (result?.error) {
-        console.error('AuthForm: Erreur résultat', result.error);
         setError('Erreur de connexion. Vérifiez vos identifiants.');
-      } else {
-        console.log('AuthForm: Succès');
       }
     } catch (err) {
       console.error('AuthForm: Erreur catch', err);
@@ -86,8 +78,6 @@ export const AuthForm: React.FC = () => {
       case 'reset': return 'Envoyer le lien';
     }
   };
-
-  console.log('AuthForm render - mode:', mode, 'loading:', loading);
 
   return (
     <div className="auth-container">
