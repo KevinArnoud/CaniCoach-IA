@@ -14,3 +14,17 @@ Stocke les informations des utilisateurs.
   },
   "createdAt": "date"
 }
+
+## Collection `dogs`
+Stocke les profils des chiens, liés à un utilisateur.
+```json
+{
+  "dogId": "string (unique)",
+  "ownerId": "string (lien vers users.userId)",
+  "name": "string",
+  "photoUrl": "string (URL de l'image stockée)",
+  "breed": "string",
+  "dateOfBirth": "date",
+  "background": "string (champ texte libre)",
+  "healthIssues": "string (champ texte libre)"
+}
