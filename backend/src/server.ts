@@ -35,13 +35,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Supabase client pour vérification
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-const supabase = supabaseUrl && supabaseKey 
-  ? createClient(supabaseUrl, supabaseKey)
-  : null;
+// Mode développement - pas de Supabase
+const supabase = null;
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -55,7 +50,7 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     message: 'CaniCoach-IA Backend is running',
     timestamp: new Date().toISOString(),
-    supabase: supabase ? 'Connected' : 'Not configured (using mock data)',
+    supabase: 'Disabled in development mode',
     environment: process.env.NODE_ENV || 'development'
   });
 });

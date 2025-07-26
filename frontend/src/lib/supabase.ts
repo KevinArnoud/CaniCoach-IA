@@ -3,12 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase credentials not found. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
-}
+// Mode développement - pas de warning si Supabase n'est pas configuré
+const isDevelopment = import.meta.env.DEV;
 
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+export const supabase = null; // Désactiver Supabase en mode développement
 
 export type { User } from '@supabase/supabase-js';
