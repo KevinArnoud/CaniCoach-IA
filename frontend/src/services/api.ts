@@ -4,10 +4,15 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 // Fonction utilitaire pour obtenir le token d'authentification
 const getAuthToken = async (): Promise<string | null> => {
-  if (!supabase) return null;
+  if (!supabase) return 'mock-token'; // Token mock pour le développement
   
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token || null;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token || null;
+  } catch (error) {
+    console.error('Error getting auth token:', error);
+    return null;
+  }
 };
 
 // Fonction utilitaire pour faire des requêtes API

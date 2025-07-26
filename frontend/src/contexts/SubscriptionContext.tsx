@@ -33,26 +33,29 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     const loadUserProfile = async () => {
       if (!user) {
+        setStatus('free_trial');
+        setTrialTopicState(null);
         setLoading(false);
         return;
       }
 
       try {
-        const profile = await userService.getProfile();
-        setStatus(profile.subscription?.status || 'free_trial');
-        setTrialTopicState(profile.trial_topic || null);
+        // En mode développement, utiliser localStorage comme fallback
+        if (!supabase) {
+          const savedStatus = localStorage.getItem(`subscription_${user.id}`) as SubscriptionStatus;
+          const savedTopic = localStorage.getItem(`trial_topic_${user.id}`);
+          
+          setStatus(savedStatus || 'free_trial');
+          setTrialTopicState(savedTopic || null);
+        } else {
+          const profile = await userService.getProfile();
+          setStatus(profile.subscription?.status || 'free_trial');
+          setTrialTopicState(profile.trial_topic || null);
+        }
       } catch (error) {
         console.error('Error loading user profile:', error);
-        // Fallback vers localStorage en cas d'erreur
-        const savedStatus = localStorage.getItem(`subscription_${user.id}`);
-        const savedTopic = localStorage.getItem(`trial_topic_${user.id}`);
-        
-        if (savedStatus) {
-          setStatus(savedStatus as SubscriptionStatus);
-        }
-        if (savedTopic) {
-          setTrialTopicState(savedTopic);
-        }
+        setStatus('free_trial');
+        setTrialTopicState(null);
       } finally {
         setLoading(false);
       }
@@ -91,12 +94,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (status === 'free_trial' && !trialTopic) {
       setTrialTopicState(topic);
       
-      // Sauvegarder via API
-      userService.updateTrialTopic(topic).catch(error => {
-        console.error('Error updating trial topic:', error);
-        // Fallback vers localStorage
+      // Sauvegarder via API ou localStorage
+      if (user) {
         localStorage.setItem(`trial_topic_${user.id}`, topic);
-      });
+        
+        if (supabase) {
+          userService.updateTrialTopic(topic).catch(error => {
+            console.error('Error updating trial topic:', error);
+          });
+        }
+      }
     }
   };
 
@@ -110,20 +117,25 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setTrialTopicState(null);
     setStatus('free_trial');
     
-    // Réinitialiser via API
-    userService.updateProfile({
-      subscription: {
-        status: 'free_trial',
-        trial_end_date: null,
-        stripe_customer_id: null
-      },
-      trial_topic: null
-    }).catch(error => {
-      console.error('Error resetting trial:', error);
-      // Fallback vers localStorage
+    // Réinitialiser localStorage
+    if (user) {
       localStorage.removeItem(`subscription_${user.id}`);
       localStorage.removeItem(`trial_topic_${user.id}`);
-    });
+      
+      // Réinitialiser via API si disponible
+      if (supabase) {
+        userService.updateProfile({
+          subscription: {
+            status: 'free_trial',
+            trial_end_date: null,
+            stripe_customer_id: null
+          },
+          trial_topic: null
+        }).catch(error => {
+          console.error('Error resetting trial:', error);
+        });
+      }
+    }
   };
 
   const value = {
@@ -134,7 +146,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setTrialTopic,
     isTopicAllowed,
     resetTrial,
-    loading,
   };
 
   return (
