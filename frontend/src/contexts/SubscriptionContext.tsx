@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { userService } from '../services/api';
 
 export type SubscriptionStatus = 'free_trial' | 'active_monthly' | 'active_annual' | 'cancelled';
 
@@ -27,31 +28,58 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { user } = useAuth();
   const [status, setStatus] = useState<SubscriptionStatus>('free_trial');
   const [trialTopic, setTrialTopicState] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // En mode développement, simuler un essai gratuit
-    if (user) {
-      const savedStatus = localStorage.getItem(`subscription_${user.id}`);
-      const savedTopic = localStorage.getItem(`trial_topic_${user.id}`);
-      
-      if (savedStatus) {
-        setStatus(savedStatus as SubscriptionStatus);
+    const loadUserProfile = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
       }
-      if (savedTopic) {
-        setTrialTopicState(savedTopic);
+
+      try {
+        const profile = await userService.getProfile();
+        setStatus(profile.subscription?.status || 'free_trial');
+        setTrialTopicState(profile.trial_topic || null);
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        // Fallback vers localStorage en cas d'erreur
+        const savedStatus = localStorage.getItem(`subscription_${user.id}`);
+        const savedTopic = localStorage.getItem(`trial_topic_${user.id}`);
+        
+        if (savedStatus) {
+          setStatus(savedStatus as SubscriptionStatus);
+        }
+        if (savedTopic) {
+          setTrialTopicState(savedTopic);
+        }
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    loadUserProfile();
   }, [user]);
 
   const canUseChat = status !== 'free_trial' || true; // Toujours autorisé pour l'essai, la logique est dans le chat
 
   const upgradeToSubscription = async (plan: 'monthly' | 'annual') => {
     try {
-      // Simulation de l'upgrade en mode développement
       const newStatus = plan === 'monthly' ? 'active_monthly' : 'active_annual';
-      setStatus(newStatus);
       
-      if (user) {
+      try {
+        await userService.updateProfile({
+          subscription: {
+            status: newStatus,
+            trial_end_date: null,
+            stripe_customer_id: null
+          }
+        });
+        setStatus(newStatus);
+      } catch (error) {
+        console.error('Error updating subscription:', error);
+        // Fallback vers localStorage
+        setStatus(newStatus);
         localStorage.setItem(`subscription_${user.id}`, newStatus);
       }
     } catch (error) {
@@ -62,9 +90,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setTrialTopic = (topic: string) => {
     if (status === 'free_trial' && !trialTopic) {
       setTrialTopicState(topic);
-      if (user) {
+      
+      // Sauvegarder via API
+      userService.updateTrialTopic(topic).catch(error => {
+        console.error('Error updating trial topic:', error);
+        // Fallback vers localStorage
         localStorage.setItem(`trial_topic_${user.id}`, topic);
-      }
+      });
     }
   };
 
@@ -77,10 +109,21 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const resetTrial = () => {
     setTrialTopicState(null);
     setStatus('free_trial');
-    if (user) {
+    
+    // Réinitialiser via API
+    userService.updateProfile({
+      subscription: {
+        status: 'free_trial',
+        trial_end_date: null,
+        stripe_customer_id: null
+      },
+      trial_topic: null
+    }).catch(error => {
+      console.error('Error resetting trial:', error);
+      // Fallback vers localStorage
       localStorage.removeItem(`subscription_${user.id}`);
       localStorage.removeItem(`trial_topic_${user.id}`);
-    }
+    });
   };
 
   const value = {
@@ -91,6 +134,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setTrialTopic,
     isTopicAllowed,
     resetTrial,
+    loading,
   };
 
   return (
