@@ -20,13 +20,13 @@ interface DogProfile {
   photoUrl?: string;
 }
 
-// Page d'accueil - STABLE
+// Page d'accueil
 const WelcomePage: React.FC<{ 
   onStartChat: () => void; 
   onCreateProfile: () => void;
   onShowProgressJournal: () => void;
   onShowWeeklyChallenges: () => void;
-}> = React.memo(({ 
+}> = ({ 
   onStartChat, 
   onCreateProfile,
   onShowProgressJournal,
@@ -117,20 +117,20 @@ const WelcomePage: React.FC<{
       </div>
     </div>
   );
-});
+};
 
-// Dashboard principal - STABILISÉ
+// Dashboard principal
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   
-  // États stables avec valeurs par défaut
+  // États avec valeurs par défaut
   const [currentView, setCurrentView] = useState<'welcome' | 'profile' | 'chat'>('welcome');
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [showProgressJournal, setShowProgressJournal] = useState(false);
   const [showWeeklyChallenges, setShowWeeklyChallenges] = useState(false);
   const [dogProfile, setDogProfile] = useState<DogProfile | null>(null);
 
-  // Handlers stables avec useCallback
+  // Handlers avec useCallback
   const handleSignOut = useCallback(async () => {
     await signOut();
   }, [signOut]);
@@ -160,7 +160,7 @@ const Dashboard: React.FC = () => {
     setShowWeeklyChallenges(true);
   }, []);
 
-  // Fonction utilitaire stable
+  // Fonction utilitaire
   const calculateAge = useCallback((birthDate: string): string => {
     if (!birthDate) return '';
     
@@ -181,7 +181,7 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
-  // Rendu conditionnel STABLE
+  // Rendu conditionnel
   if (currentView === 'profile') {
     return (
       <DogProfileForm 
@@ -261,8 +261,8 @@ const Dashboard: React.FC = () => {
   );
 };
 
-// Composant de chargement - STABLE
-const LoadingScreen: React.FC = React.memo(() => (
+// Composant de chargement
+const LoadingScreen: React.FC = () => (
   <div className="loading-container">
     <div className="loading-content">
       <CaniCoachMainLogo size={48} className="loading-icon" />
@@ -271,13 +271,12 @@ const LoadingScreen: React.FC = React.memo(() => (
       <div className="loading-spinner"></div>
     </div>
   </div>
-));
+);
 
-// Gestion de l'état d'authentification - ULTRA STABLE
+// Gestion de l'état d'authentification
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
 
-  // Pas de changements d'état ici, juste du rendu conditionnel
   if (loading) {
     return <LoadingScreen />;
   }
@@ -293,7 +292,7 @@ const AppContent: React.FC = () => {
   );
 };
 
-// App principale - ULTRA SIMPLE
+// App principale
 const App: React.FC = () => {
   return (
     <AuthProvider>

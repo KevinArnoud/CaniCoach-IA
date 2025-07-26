@@ -26,16 +26,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier si Supabase est configuré
+    // Mode développement simple
     if (!supabase) {
-      console.warn('Supabase not configured, using mock auth');
-      // Fallback vers le mock pour le développement
-      const mockUser = {
-        id: 'dev-user-123',
-        email: 'test@canicoach.dev',
-        created_at: new Date().toISOString(),
-      };
-      
+      console.log('Mode développement - Supabase non configuré');
       const savedUser = localStorage.getItem('canicoach_user');
       if (savedUser) {
         try {
@@ -50,37 +43,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    // Obtenir la session initiale
-    const getInitialSession = async () => {
+    // Mode production avec Supabase
+    const initAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error getting session:', error);
-        } else {
-          setUser(session?.user ?? null);
-        }
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
       } catch (error) {
-        console.error('Error in getInitialSession:', error);
+        console.error('Error getting session:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    getInitialSession();
+    initAuth();
 
-    // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
         setUser(session?.user ?? null);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-          // Créer ou mettre à jour le profil utilisateur
-          await createOrUpdateUserProfile(session.user);
-        }
-        
         setLoading(false);
       }
     );
@@ -90,41 +69,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const createOrUpdateUserProfile = async (user: User) => {
-    if (!supabase) return;
-
-    try {
-      const { error } = await supabase
-        .from('users')
-        .upsert({
-          user_id: user.id,
-          email: user.email,
-          created_at: user.created_at,
-          subscription: {
-            status: 'free_trial',
-            trial_end_date: null,
-            stripe_customer_id: null
-          }
-        }, {
-          onConflict: 'user_id'
-        });
-
-      if (error) {
-        console.error('Error creating/updating user profile:', error);
-      }
-    } catch (error) {
-      console.error('Error in createOrUpdateUserProfile:', error);
-    }
-  };
-
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
-      // Fallback mock pour le développement
+      // Mode développement
       try {
         setLoading(true);
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const mockUser = { id: 'dev-user-123', email, created_at: new Date().toISOString() };
+        const mockUser = { 
+          id: 'dev-user-123', 
+          email, 
+          created_at: new Date().toISOString() 
+        };
         localStorage.setItem('canicoach_user', JSON.stringify(mockUser));
         setUser(mockUser as User);
         
@@ -138,19 +94,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       setLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
-      if (error) {
-        console.error('Sign in error:', error);
-        return { error };
-      }
-
-      return { error: null };
+      return { error };
     } catch (error) {
-      console.error('Sign in catch error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -159,12 +108,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string) => {
     if (!supabase) {
-      // Fallback mock pour le développement
+      // Mode développement
       try {
         setLoading(true);
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const mockUser = { id: 'dev-user-123', email, created_at: new Date().toISOString() };
+        const mockUser = { 
+          id: 'dev-user-123', 
+          email, 
+          created_at: new Date().toISOString() 
+        };
         localStorage.setItem('canicoach_user', JSON.stringify(mockUser));
         setUser(mockUser as User);
         
@@ -178,27 +131,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       setLoading(true);
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
       });
-
-      if (error) {
-        console.error('Sign up error:', error);
-        return { error };
-      }
-
-      // Si l'email confirmation est désactivée, l'utilisateur sera connecté immédiatement
-      if (data.user && !data.user.email_confirmed_at) {
-        console.log('User created, waiting for email confirmation');
-      }
-
-      return { error: null };
+      return { error };
     } catch (error) {
-      console.error('Sign up catch error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -207,7 +145,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     if (!supabase) {
-      // Fallback mock pour le développement
       try {
         setLoading(true);
         localStorage.removeItem('canicoach_user');
@@ -223,15 +160,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Sign out error:', error);
-        return { error };
-      }
-
-      return { error: null };
+      return { error };
     } catch (error) {
-      console.error('Sign out catch error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -240,23 +170,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     if (!supabase) {
-      // Mock pour le développement
       return { error: null };
     }
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`
-      });
-
-      if (error) {
-        console.error('Reset password error:', error);
-        return { error };
-      }
-
-      return { error: null };
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      return { error };
     } catch (error) {
-      console.error('Reset password catch error:', error);
       return { error };
     }
   };
