@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from './utils/supabaseClient';
 import { marked } from 'marked';
 import OpenAI from 'openai';
+import { SmartChatService } from './services/smartChatService';
 
 const openai = new OpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true });
 
@@ -16,6 +17,7 @@ export default function Chatbot({ session, onInteraction }: ChatbotProps) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   
   // NOUVEAUX ÉTATS POUR GÉRER PLUSIEURS CHIENS
   const [userDogs, setUserDogs] = useState<DogProfile[]>([]);
@@ -62,31 +64,106 @@ export default function Chatbot({ session, onInteraction }: ChatbotProps) {
   };
 
   async function getBotResponse(userMessage: string): Promise<string> {
-    try {
-      const queryEmbeddingResponse = await openai.embeddings.create({ model: 'text-embedding-3-small', input: userMessage });
-      const queryEmbedding = queryEmbeddingResponse.data[0].embedding;
-      const { data: documents, error } = await supabase.rpc('match_documents', {
-        query_embedding: queryEmbedding, match_threshold: 0.70, match_count: 5,
-      });
+  try {
+    // 🧠 NOUVELLE INTELLIGENCE : Analyser l'émotion de l'utilisateur
+    const userEmotion = SmartChatService.detectEmotion(userMessage);
+    const emotionalPrompt = SmartChatService.getEmotionalPrompt(userEmotion);
+    
+    // 🔍 Recherche dans votre base de connaissances (comme avant)
+    const queryEmbeddingResponse = await openai.embeddings.create({ 
+      model: 'text-embedding-3-small', 
+      input: userMessage 
+    });
+    const queryEmbedding = queryEmbeddingResponse.data[0].embedding;
+    
+    const { data: documents, error } = await supabase.rpc('match_documents', {
+      query_embedding: queryEmbedding, 
+      match_threshold: 0.70, 
+      match_count: 5,
+    });
 
-      if (error) throw new Error(`Erreur RPC Supabase: ${error.message}`);
-      
-      const contextText = documents.map((doc: any) => doc.content).join('\n\n---\n\n');
-      const dogInfo = activeDog ? `Le chien s'appelle ${activeDog.name}, a ${calculateAge(activeDog.dateOfBirth)} et est de race ${activeDog.breed || 'non spécifiée'}.` : "Les informations du chien ne sont pas spécifiées.";
-      const prompt = `
-        Tu es CaniCoach... (Le prompt reste le même) ... Profil du Chien: ${dogInfo} ...
-      `;
-      const completionResponse = await openai.chat.completions.create({ model: 'gpt-4o', messages: [{ role: 'user', content: prompt }], temperature: 0.5 });
-      return completionResponse.choices[0].message.content || "Je n'ai pas pu formuler de réponse.";
-    } catch (err) {
-      console.error("Erreur dans le processus RAG:", err);
-      return "Désolé, je rencontre une difficulté technique pour vous répondre.";
+    if (error) throw new Error(`Erreur RPC Supabase: ${error.message}`);
+    
+    const contextText = documents.map((doc: any) => doc.content).join('\n\n---\n\n');
+    
+    // 🐕 Informations du chien (améliorées)
+    const dogInfo = activeDog ? 
+      `Le chien s'appelle ${activeDog.name}, a ${calculateAge(activeDog.dateOfBirth)} et est de race ${activeDog.breed || 'non spécifiée'}.` :
+      "Les informations du chien ne sont pas spécifiées.";
+
+    // 🎯 NOUVEAU PROMPT AUTHENTIQUE ESPRIT DOG
+    const prompt = `
+${SmartChatService.getEspritDogPrompt()}
+
+ADAPTATION ÉMOTIONNELLE :
+${emotionalPrompt}
+
+PROFIL DU CHIEN : ${dogInfo}
+
+BASE DE CONNAISSANCES :
+${contextText}
+
+QUESTION DE L'UTILISATEUR : ${userMessage}
+
+INSTRUCTIONS :
+1. Commence par reconnaître la situation et rassurer si nécessaire
+2. Explique le "pourquoi" derrière le comportement avec bienveillance  
+3. Donne des conseils pratiques applicables immédiatement
+4. Utilise le vocabulaire Esprit Dog quand c'est naturel
+5. Termine par un encouragement avec le nom du chien
+6. Garde un ton chaleureux et déculpabilisant
+
+Réponds comme Tony Silvestre le ferait, avec sa bienveillance légendaire.
+    `;
+
+    // 🤖 Appel à OpenAI avec le nouveau prompt
+    const completionResponse = await openai.chat.completions.create({ 
+      model: 'gpt-4o', 
+      messages: [{ role: 'user', content: prompt }], 
+      temperature: 0.6,  // Un peu plus de chaleur humaine
+      max_tokens: 800
+    });
+
+    const botResponse = completionResponse.choices[0].message.content || "Je n'ai pas pu formuler de réponse.";
+    
+    // 🎯 NOUVELLE INTELLIGENCE : Détecter si l'utilisateur est satisfait
+    const isSatisfied = SmartChatService.detectSatisfaction(userMessage);
+    if (isSatisfied) {
+      console.log('🎉 Utilisateur satisfait détecté !');
+      // TODO: Ici on pourra déclencher le paywall plus tard
     }
+
+    return botResponse;
+    
+  } catch (err) {
+    console.error("Erreur dans le processus RAG:", err);
+    return "Désolé, je rencontre une difficulité technique. Pouvez-vous reformuler votre question ?";
   }
+}
 
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
     if (input.trim() === '' || loading || !activeDog) return;
+    
+    // NOUVEAU : Système de comptage local pour la démo
+if (session?.user?.id) {
+  try {
+    // Récupérer les compteurs actuels
+    const currentCount = parseInt(localStorage.getItem('canicoach_interactions') || '0');
+    const problemsResolved = parseInt(localStorage.getItem('canicoach_problems_resolved') || '0');
+    
+    // Incrémenter
+    const newCount = currentCount + 1;
+    localStorage.setItem('canicoach_interactions', newCount.toString());
+    
+    console.log(`✅ Interaction ${newCount} comptée !`);
+    console.log(`📊 Total interactions: ${newCount}, Problèmes résolus: ${problemsResolved}`);
+    
+  } catch (error) {
+    console.error('Erreur comptage:', error);
+  }
+}
+
     onInteraction();
     const userMessageText = input;
     const userMessage: Message = { id: String(Date.now()), text: userMessageText, sender: 'user', timestamp: new Date().toISOString() };
@@ -98,6 +175,24 @@ export default function Chatbot({ session, onInteraction }: ChatbotProps) {
     const botMessage: Message = { id: String(Date.now() + 1), text: botResponseText, sender: 'bot', timestamp: new Date().toISOString() };
     setMessages(prev => [...prev, botMessage]);
     setLoading(false);
+
+    // NOUVEAU : Détecter satisfaction (version locale)
+const isSatisfied = SmartChatService.detectSatisfaction(userMessageText);
+if (isSatisfied && session?.user?.id) {
+  console.log('🎉 Problème résolu !');
+  try {
+    const currentProblems = parseInt(localStorage.getItem('canicoach_problems_resolved') || '0');
+    const newProblems = currentProblems + 1;
+    localStorage.setItem('canicoach_problems_resolved', newProblems.toString());
+    
+    console.log(`✅ Problème ${newProblems} résolu !`);
+    console.log('💡 Déclenchement du paywall !');
+    setShowPaywall(true);
+    
+  } catch (error) {
+    console.error('Erreur:', error);
+  }
+}
   };
 
   return (
@@ -145,6 +240,274 @@ export default function Chatbot({ session, onInteraction }: ChatbotProps) {
         <div ref={messagesEndRef} />
       </div>
 
+{showPaywall && (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px'
+  }}>
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: 'var(--border-radius-large)',
+      padding: '32px 24px',
+      maxWidth: '480px',
+      width: '100%',
+      maxHeight: '90vh',
+      overflowY: 'auto',
+      position: 'relative',
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)'
+    }}>
+      {/* En-tête */}
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🎉</div>
+        <h2 style={{ 
+          margin: '0 0 8px 0', 
+          fontSize: '1.5rem',
+          color: 'var(--color-text-dark)'
+        }}>
+          Félicitations !
+        </h2>
+        <h3 style={{ 
+          margin: '0 0 16px 0', 
+          fontSize: '1.1rem',
+          color: 'var(--color-primary)',
+          fontWeight: '600'
+        }}>
+          Vous avez résolu votre premier problème !
+        </h3>
+        <p style={{ 
+          margin: 0, 
+          color: 'var(--color-text-medium)',
+          lineHeight: 1.5,
+          fontSize: '0.95rem'
+        }}>
+          Pour débloquer tous les autres sujets et continuer à construire une relation parfaite avec votre chien, choisissez votre formule.
+        </p>
+      </div>
+
+      {/* Plans d'abonnement */}
+      <div style={{ marginBottom: '24px' }}>
+        {/* Plan mensuel */}
+        <div style={{ 
+          background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
+          color: 'white',
+          padding: '24px',
+          borderRadius: 'var(--border-radius-medium)',
+          marginBottom: '16px',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '16px', 
+            background: 'var(--color-success)',
+            color: 'white',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            fontSize: '0.75rem',
+            fontWeight: '700',
+            textTransform: 'uppercase'
+          }}>
+            Populaire
+          </div>
+     
+          <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: '700' }}>
+            Abonnement Mensuel
+          </h3>
+          <div style={{ fontSize: '2rem', fontWeight: '800', margin: '12px 0' }}>
+            9,99€<span style={{ fontSize: '1rem', fontWeight: '400' }}>/mois</span>
+          </div>
+          
+          <ul style={{ 
+            listStyle: 'none', 
+            padding: 0, 
+            margin: '16px 0 20px 0',
+            fontSize: '0.9rem'
+          }}>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Conseils illimités avec CaniCoach IA
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Jusqu'à 5 profils de chiens
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Suivi personnalisé et notifications
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Support prioritaire
+            </li>
+          </ul>
+          
+          <button 
+            onClick={() => {
+              alert('🧪 Démo : Redirection vers le paiement Stripe !');
+              setShowPaywall(false);
+            }}
+            style={{ 
+              backgroundColor: 'white',
+              color: 'var(--color-primary)',
+              fontWeight: '700',
+              border: 'none',
+              fontSize: '1rem',
+              padding: '12px 20px',
+              margin: '0',
+              width: '100%',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Commencer maintenant
+          </button>
+        </div>
+
+        {/* Plan annuel */}
+        <div style={{ 
+          border: '2px solid var(--color-primary)',
+          padding: '24px',
+          borderRadius: 'var(--border-radius-medium)',
+          backgroundColor: 'var(--color-card-background-light)'
+        }}>
+          <h3 style={{ 
+            margin: '0 0 8px 0', 
+            color: 'var(--color-text-dark)', 
+            fontSize: '1.2rem',
+            fontWeight: '700'
+          }}>
+            Abonnement Annuel
+          </h3>
+          <div style={{ 
+            fontSize: '2rem',
+            fontWeight: '800', 
+            margin: '12px 0',
+            color: 'var(--color-primary)'
+          }}>
+            99,99€<span style={{ fontSize: '1rem', fontWeight: '400' }}>/an</span>
+          </div>
+          <div style={{ 
+            color: 'var(--color-success)',
+            fontWeight: '700',
+            marginBottom: '16px',
+            fontSize: '0.9rem'
+          }}>
+            💰 Économisez 17% ! (2 mois gratuits)
+          </div>
+          
+          <ul style={{ 
+            listStyle: 'none', 
+            padding: 0, 
+            margin: '16px 0 20px 0',
+            color: 'var(--color-text-dark)',
+            fontSize: '0.9rem'
+          }}>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Tout du plan mensuel
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Profils chiens illimités
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Analyses comportementales avancées
+            </li>
+            <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '8px' }}>✅</span>
+              Accès aux nouveautés en avant-première
+            </li>
+          </ul>
+          
+          <button 
+            onClick={() => {
+              alert('🧪 Démo : Redirection vers le paiement annuel !');
+              setShowPaywall(false);
+            }}
+            style={{
+              fontSize: '1rem',
+              padding: '12px 20px',
+              margin: '0',
+              width: '100%',
+              borderRadius: '8px',
+              backgroundColor: 'var(--color-card-background-light)',
+              color: 'var(--color-primary)',
+              border: '2px solid var(--color-primary)',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}
+          >
+            Choisir l'annuel
+          </button>
+        </div>
+      </div>
+
+      {/* Garantie */}
+      <div style={{ 
+        margin: '24px 0',
+        padding: '16px',
+        backgroundColor: 'var(--color-primary-light)',
+        borderRadius: 'var(--border-radius-medium)',
+        border: '1px solid var(--color-primary)',
+        textAlign: 'center'
+      }}>
+        <h4 style={{ 
+          margin: '0 0 8px 0', 
+          color: 'var(--color-primary)',
+          fontSize: '1rem'
+        }}>
+          🛡️ Garantie satisfait ou remboursé 30 jours
+        </h4>
+        <p style={{ 
+          margin: 0, 
+          fontSize: '0.85rem',
+          color: 'var(--color-text-medium)'
+        }}>
+          Vous pouvez annuler à tout moment. Aucun engagement.
+        </p>
+      </div>
+
+      {/* Footer */}
+      <div style={{ 
+        textAlign: 'center',
+        fontSize: '0.8rem',
+        color: 'var(--color-text-medium)',
+        marginTop: '16px'
+      }}>
+        💳 Paiement sécurisé • 🇫🇷 Développé en France avec ❤️
+      </div>
+
+      {/* Bouton fermer pour la démo */}
+      <button
+        onClick={() => setShowPaywall(false)}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          background: 'none',
+          border: 'none',
+          fontSize: '24px',
+          cursor: 'pointer',
+          color: 'var(--color-text-medium)',
+          padding: '4px'
+        }}
+      >
+        ×
+      </button>
+    </div>
+  </div>
+)}
       <form onSubmit={handleSendMessage} className="message-input-form-mobile">
         <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder={!activeDog ? "Veuillez d'abord ajouter un chien..." : (loading ? 'CaniCoach répond...' : 'Tapez votre message...')} disabled={loading || !activeDog} className="chat-input-field" />
         <button type="submit" disabled={loading || input.trim() === '' || !activeDog} className="send-message-button" aria-label="Envoyer le message">
