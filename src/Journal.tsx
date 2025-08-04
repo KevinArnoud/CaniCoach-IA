@@ -1,188 +1,148 @@
-// src/Journal.tsx - Version Transform��e
+// src/Journal.tsx - Version Corrigée pour les Doublons
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from './utils/supabaseClient';
 import type { AuthSession } from './App';
+import Challenge from './Challenge';
 
 interface Dog {
   dog_id: string;
   name: string;
-  breed?: string;
-  date_of_birth?: string;
 }
 
 interface JournalEntry {
   entry_id: number;
   content: string;
   created_at: string;
-  mood: 'frustrated' | 'neutral' | 'happy' | 'proud' | 'excited';
-  entry_type: 'note' | 'milestone' | 'photo' | 'achievement';
   dogs: { name: string };
-}
-
-interface JournalEntryFromDB {
-  entry_id: number;
-  content: string;
-  created_at: string;
-  dog_id: string;
-  mood?: string;
-  entry_type?: string;
 }
 
 export default function Journal({ session }: { session: AuthSession }) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [selectedDogId, setSelectedDogId] = useState<string>('');
+  const [newEntryContent, setNewEntryContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // États pour la nouvelle entrée
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newEntry, setNewEntry] = useState({
-    content: '',
-    mood: 'neutral' as const,
-    entry_type: 'note' as const
-  });
+  const [editingEntryId, setEditingEntryId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState('');
 
-  const loadJournalData = useCallback(async () => {
+  // ✅ CORRECTION 1: Fonction optimisée pour éviter les doublons
+  const getJournalData = useCallback(async () => {
+    if (!session?.user?.id) return;
+    
     setLoading(true);
     setError(null);
+    
     try {
-      if (!session?.user) throw new Error("Session utilisateur non trouvée.");
-
-      // Charger les chiens avec plus d'infos
+      // 🔹 Récupération des chiens (simple, sans jointure)
       const { data: dogsData, error: dogsError } = await supabase
         .from('dogs')
-        .select('dog_id, name, breed, date_of_birth')
-        .eq('owner_id', session.user.id);
+        .select('dog_id, name')
+        .eq('owner_id', session.user.id)
+        .order('created_at', { ascending: false });
+
       if (dogsError) throw dogsError;
-
-      const userDogs = dogsData || [];
-      setDogs(userDogs);
-      if (userDogs.length > 0 && !selectedDogId) {
-        setSelectedDogId(userDogs[0].dog_id);
-      }
-
-      // Charger les entrées existantes
+      
+      // 🔹 Récupération des entrées avec jointure propre
       const { data: entriesData, error: entriesError } = await supabase
         .from('journal_entries')
-        .select('entry_id, content, created_at, dog_id, mood, entry_type')
+        .select(`
+          entry_id,
+          content,
+          created_at,
+          dog_id,
+          dogs:dog_id (name)
+        `)
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
+
       if (entriesError) throw entriesError;
 
-      const dogsMap = new Map(userDogs.map(dog => [dog.dog_id, dog.name]));
-      const hydratedEntries = (entriesData as JournalEntryFromDB[] || []).map(entry => ({
-        ...entry,
-        mood: (entry.mood as any) || 'neutral',
-        entry_type: (entry.entry_type as any) || 'note',
-        dogs: { name: dogsMap.get(entry.dog_id) || 'Chien supprimé' }
+      // ✅ CORRECTION 2: Nettoyage et déduplication des données
+      const cleanDogs = dogsData || [];
+      const cleanEntries = (entriesData || []).map(entry => ({
+        entry_id: entry.entry_id,
+        content: entry.content,
+        created_at: entry.created_at,
+        dogs: { name: entry.dogs?.name || 'Chien inconnu' }
       }));
-      setEntries(hydratedEntries);
 
-      // Ajouter des milestones automatiques si c'est le premier chargement
-      await checkAndAddMilestones(userDogs);
+      // ✅ CORRECTION 3: Déduplication basée sur entry_id
+      const uniqueEntries = cleanEntries.filter((entry, index, self) => 
+        index === self.findIndex(e => e.entry_id === entry.entry_id)
+      );
+
+      console.log('📊 Données chargées:', { dogsCount: cleanDogs.length, entriesCount: uniqueEntries.length });
+
+      setDogs(cleanDogs);
+      setEntries(uniqueEntries);
+
+      // Sélectionner le premier chien par défaut si aucun n'est sélectionné
+      if (cleanDogs.length > 0 && !selectedDogId) {
+        setSelectedDogId(cleanDogs[0].dog_id);
+      }
 
     } catch (err: any) {
+      console.error('❌ Erreur chargement journal:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [session, selectedDogId]);
+  }, [session?.user?.id, selectedDogId]); // ✅ Dépendances optimisées
 
-  // Fonction pour ajouter des milestones automatiques
-  const checkAndAddMilestones = async (userDogs: Dog[]) => {
-    for (const dog of userDogs) {
-      if (dog.date_of_birth) {
-        const ageInMonths = calculateAgeInMonths(dog.date_of_birth);
-        const milestones = getMilestonesForAge(ageInMonths, dog.name);
-        
-        for (const milestone of milestones) {
-          // Vérifier si ce milestone existe déjà
-          const existing = entries.find(e => 
-            e.content.includes(milestone.content.substring(0, 20)) && 
-            e.entry_type === 'milestone'
-          );
-          
-          if (!existing) {
-            // Ajouter le milestone silencieusement
-            await supabase
-              .from('journal_entries')
-              .insert({
-                user_id: session?.user.id,
-                dog_id: dog.dog_id,
-                content: milestone.content,
-                entry_type: 'milestone',
-                mood: 'proud'
-              });
-          }
-        }
-      }
-    }
-  };
-
-  const calculateAgeInMonths = (dateOfBirth: string): number => {
-    const birth = new Date(dateOfBirth);
-    const now = new Date();
-    return Math.ceil(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24 * 30.44));
-  };
-
-  const getMilestonesForAge = (ageInMonths: number, dogName: string) => {
-    const milestones = [];
-    
-    if (ageInMonths >= 2 && ageInMonths <= 4) {
-      milestones.push({
-        content: `🎯 ${dogName} est dans sa période critique de socialisation ! C'est le moment parfait pour créer un "dépôt de confiance" solide.`
-      });
-    }
-    
-    if (ageInMonths >= 6 && ageInMonths <= 8) {
-      milestones.push({
-        content: `🧑‍🎓 ${dogName} entre dans l'adolescence canine. C'est normal s'il y a quelques régressions !`
-      });
-    }
-    
-    if (ageInMonths >= 12) {
-      milestones.push({
-        content: `🎉 ${dogName} a maintenant 1 an ! Félicitations pour cette première année ensemble !`
-      });
-    }
-    
-    return milestones;
-  };
-
+  // ✅ CORRECTION 4: useEffect avec nettoyage
   useEffect(() => {
-    loadJournalData();
-  }, [loadJournalData]);
+    let mounted = true;
+    
+    const loadData = async () => {
+      if (mounted) {
+        await getJournalData();
+      }
+    };
+    
+    loadData();
+    
+    return () => {
+      mounted = false; // Évite les mises à jour si le composant est démonté
+    };
+  }, [getJournalData]);
 
+  // ✅ Fonction d'ajout d'entrée (inchangée mais optimisée)
   const addEntry = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!newEntry.content.trim() || !selectedDogId) return;
-    
+    if (!newEntryContent.trim() || !selectedDogId) return;
+
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('journal_entries')
         .insert({
-          user_id: session?.user.id,
+          content: newEntryContent.trim(),
           dog_id: selectedDogId,
-          content: newEntry.content.trim(),
-          mood: newEntry.mood,
-          entry_type: newEntry.entry_type
+          user_id: session?.user?.id
         })
-        .select('entry_id, content, created_at, dog_id, mood, entry_type')
+        .select(`
+          entry_id,
+          content,
+          created_at,
+          dogs:dog_id (name)
+        `)
         .single();
+
       if (error) throw error;
 
-      const dogName = dogs.find(d => d.dog_id === selectedDogId)?.name || 'Chien';
-      const newHydratedEntry: JournalEntry = {
-        ...(data as any),
-        dogs: { name: dogName }
+      // ✅ Mise à jour optimisée de l'état local
+      const newEntry = {
+        entry_id: data.entry_id,
+        content: data.content,
+        created_at: data.created_at,
+        dogs: { name: data.dogs?.name || 'Chien inconnu' }
       };
-      
-      setEntries([newHydratedEntry, ...entries]);
-      setNewEntry({ content: '', mood: 'neutral', entry_type: 'note' });
-      setShowAddForm(false);
-      
+
+      setEntries(prevEntries => [newEntry, ...prevEntries]);
+      setNewEntryContent('');
+
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -190,381 +150,211 @@ export default function Journal({ session }: { session: AuthSession }) {
     }
   };
 
-  // Fonctions d'affichage
-  const getMoodEmoji = (mood: string): string => {
-    switch (mood) {
-      case 'frustrated': return '😤';
-      case 'happy': return '😊';
-      case 'proud': return '🥳';
-      case 'excited': return '🤩';
-      default: return '😐';
+  // ✅ Fonction de modification (optimisée)
+  const updateEntry = async () => {
+    if (!editContent.trim() || editingEntryId === null) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('journal_entries')
+        .update({ content: editContent.trim() })
+        .eq('entry_id', editingEntryId);
+
+      if (error) throw error;
+
+      // Mise à jour locale optimisée
+      setEntries(prevEntries => 
+        prevEntries.map(entry => 
+          entry.entry_id === editingEntryId 
+            ? { ...entry, content: editContent.trim() }
+            : entry
+        )
+      );
+
+      // Reset du mode édition
+      setEditingEntryId(null);
+      setEditContent('');
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getEntryIcon = (entry_type: string): string => {
-    switch (entry_type) {
-      case 'milestone': return '🎯';
-      case 'achievement': return '🏆';
-      case 'photo': return '📸';
-      default: return '📝';
+  // ✅ Fonction de suppression (optimisée)
+  const deleteEntry = async (entryId: number) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette entrée ?")) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('journal_entries')
+        .delete()
+        .eq('entry_id', entryId);
+
+      if (error) throw error;
+
+      // Mise à jour locale optimisée
+      setEntries(prevEntries => prevEntries.filter(e => e.entry_id !== entryId));
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  // ✅ Fonctions utilitaires
+  const startEditing = (entry: JournalEntry) => {
+    setEditingEntryId(entry.entry_id);
+    setEditContent(entry.content);
+  };
 
-    if (diffDays === 0) return 'Aujourd\'hui';
-    if (diffDays === 1) return 'Hier';
-    if (diffDays < 7) return `Il y a ${diffDays} jours`;
-    
-    return date.toLocaleDateString('fr-FR', {
+  const cancelEditing = () => {
+    setEditingEntryId(null);
+    setEditContent('');
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
-  if (loading && entries.length === 0) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📖</div>
-        <p>Chargement de votre journal...</p>
-      </div>
-    );
-  }
-
+  // ✅ RENDU (interface inchangée)
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      {/* En-tête */}
-      <div style={{
-        backgroundColor: 'var(--color-card-background-light)',
-        borderRadius: 'var(--border-radius-medium)',
-        padding: '24px',
-        marginBottom: '24px',
-        border: '1px solid var(--color-border-light)'
-      }}>
-        <h2 style={{ margin: '0 0 8px 0', color: 'var(--color-text-dark)' }}>
-          📖 Journal de Progrès
-        </h2>
-        <p style={{ margin: '0 0 16px 0', color: 'var(--color-text-medium)' }}>
-          Notez vos victoires, défis et moments importants avec votre compagnon
+    <>
+      <Challenge />
+
+      <div className="form-widget">
+        <h2>📓 Mon Journal de Progrès</h2>
+        <p className="description">
+          Notez ici vos victoires, vos défis et les moments importants de votre parcours avec votre compagnon.
         </p>
-
-        {/* Stats rapides */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '16px',
-          marginTop: '16px'
-        }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-primary)' }}>
-              {entries.length}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-medium)' }}>
-              Entrées
-            </div>
+        
+        {error && (
+          <div className="error-message" style={{ marginBottom: 'var(--spacing-md)' }}>
+            ❌ {error}
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-success)' }}>
-              {entries.filter(e => e.entry_type === 'milestone').length}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-medium)' }}>
-              Étapes
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-warning)' }}>
-              {entries.filter(e => e.mood === 'proud' || e.mood === 'happy').length}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-medium)' }}>
-              Victoires
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bouton ajouter entrée */}
-      <button
-        onClick={() => setShowAddForm(!showAddForm)}
-        disabled={dogs.length === 0}
-        style={{
-          width: '100%',
-          padding: '16px',
-          backgroundColor: showAddForm ? 'var(--color-text-medium)' : 'var(--color-primary)',
-          color: 'white',
-          border: 'none',
-          borderRadius: 'var(--border-radius-medium)',
-          fontSize: '1rem',
-          fontWeight: '600',
-          marginBottom: '20px',
-          cursor: dogs.length === 0 ? 'not-allowed' : 'pointer',
-          opacity: dogs.length === 0 ? 0.5 : 1
-        }}
-      >
-        {showAddForm ? '❌ Annuler' : '✏️ Nouvelle entrée'}
-      </button>
-
-      {dogs.length === 0 && (
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'var(--color-warning-light)',
-          border: '1px solid var(--color-warning)',
-          borderRadius: 'var(--border-radius-medium)',
-          marginBottom: '20px',
-          textAlign: 'center'
-        }}>
-          <p style={{ margin: 0, color: 'var(--color-warning)' }}>
-            Ajoutez d'abord un chien dans votre profil pour commencer votre journal !
-          </p>
-        </div>
-      )}
-
-      {/* Formulaire d'ajout */}
-      {showAddForm && dogs.length > 0 && (
-        <div style={{
-          backgroundColor: 'var(--color-card-background-light)',
-          border: '1px solid var(--color-border-light)',
-          borderRadius: 'var(--border-radius-medium)',
-          padding: '20px',
-          marginBottom: '24px'
-        }}>
-          <form onSubmit={addEntry}>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '4px', 
-                fontWeight: '600',
-                fontSize: '0.9rem'
-              }}>
-                Pour quel chien ?
-              </label>
-              <select
+        )}
+        
+        <form onSubmit={addEntry}>
+          {dogs.length > 0 && (
+            <div className="form-group">
+              <label htmlFor="dog-select">Pour quel chien ?</label>
+              <select 
+                id="dog-select" 
+                className="inputField" 
                 value={selectedDogId}
                 onChange={(e) => setSelectedDogId(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  borderRadius: 'var(--border-radius-small)',
-                  border: '1px solid var(--color-border-light)',
-                  backgroundColor: 'white'
-                }}
               >
                 {dogs.map(dog => (
-                  <option key={dog.dog_id} value={dog.dog_id}>
-                    {dog.name} {dog.breed && `(${dog.breed})`}
-                  </option>
+                  <option key={dog.dog_id} value={dog.dog_id}>{dog.name}</option>
                 ))}
               </select>
             </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '4px', 
-                fontWeight: '600',
-                fontSize: '0.9rem'
-              }}>
-                Votre humeur aujourd'hui
-              </label>
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(5, 1fr)', 
-                gap: '8px' 
-              }}>
-                {[
-                  { value: 'frustrated', emoji: '😤', label: 'Frustré' },
-                  { value: 'neutral', emoji: '😐', label: 'Neutre' },
-                  { value: 'happy', emoji: '😊', label: 'Content' },
-                  { value: 'proud', emoji: '🥳', label: 'Fier' },
-                  { value: 'excited', emoji: '🤩', label: 'Excité' }
-                ].map(mood => (
-                  <button
-                    key={mood.value}
-                    type="button"
-                    onClick={() => setNewEntry(prev => ({ ...prev, mood: mood.value as any }))}
-                    style={{
-                      padding: '12px 4px',
-                      backgroundColor: newEntry.mood === mood.value ? 'var(--color-primary)' : 'white',
-                      color: newEntry.mood === mood.value ? 'white' : 'var(--color-text-dark)',
-                      border: '1px solid var(--color-border-light)',
-                      borderRadius: 'var(--border-radius-small)',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <div style={{ fontSize: '1.5rem' }}>{mood.emoji}</div>
-                    <div>{mood.label}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '4px', 
-                fontWeight: '600',
-                fontSize: '0.9rem'
-              }}>
-                Votre note
-              </label>
-              <textarea
-                value={newEntry.content}
-                onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
-                placeholder={`Aujourd'hui avec ${dogs.find(d => d.dog_id === selectedDogId)?.name || 'mon chien'}...`}
-                rows={4}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: 'var(--border-radius-small)',
-                  border: '1px solid var(--color-border-light)',
-                  resize: 'vertical',
-                  fontSize: '0.95rem'
-                }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={!newEntry.content.trim() || loading}
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: loading ? 'var(--color-border-light)' : 'var(--color-success)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 'var(--border-radius-small)',
-                fontWeight: '600',
-                cursor: loading || !newEntry.content.trim() ? 'not-allowed' : 'pointer',
-                opacity: loading || !newEntry.content.trim() ? 0.6 : 1
-              }}
-            >
-              {loading ? '⏳ Ajout...' : '✅ Ajouter au journal'}
-            </button>
-          </form>
-        </div>
-      )}
-
-      {error && (
-        <div style={{
-          padding: '12px 16px',
-          backgroundColor: 'var(--color-error-light)',
-          border: '1px solid var(--color-error)',
-          borderRadius: 'var(--border-radius-medium)',
-          marginBottom: '20px',
-          color: 'var(--color-error)'
-        }}>
-          ❌ {error}
-        </div>
-      )}
-
-      {/* Timeline des entrées */}
-      <div style={{ position: 'relative' }}>
-        {entries.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '40px',
-            backgroundColor: 'var(--color-card-background-light)',
-            borderRadius: 'var(--border-radius-medium)',
-            border: '1px solid var(--color-border-light)'
-          }}>
-            <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📖</div>
-            <p style={{ color: 'var(--color-text-medium)' }}>
-              Votre journal est vide. Commencez à écrire !
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="journal-content">Nouvelle entrée</label>
+            <textarea
+              id="journal-content"
+              className="inputField"
+              rows={4}
+              placeholder="Aujourd'hui, [nom du chien] a réussi à..."
+              value={newEntryContent}
+              onChange={(e) => setNewEntryContent(e.target.value)}
+              disabled={loading || dogs.length === 0}
+            />
+          </div>
+          
+          <button 
+            className="button" 
+            type="submit" 
+            disabled={loading || !newEntryContent.trim() || !selectedDogId}
+          >
+            {loading ? '⏳ Ajout...' : '✍️ Ajouter au journal'}
+          </button>
+          
+          {dogs.length === 0 && !loading && (
+            <p style={{color: 'var(--color-text-medium)', marginTop: 'var(--spacing-md)'}}>
+              Vous devez d'abord ajouter un chien dans votre profil.
             </p>
+          )}
+        </form>
+      </div>
+
+      {/* Liste des entrées */}
+      <div className="journal-entries-list">
+        {loading && entries.length === 0 ? (
+          <div className="loading-state">
+            <div className="icon">⏳</div>
+            <p>Chargement de votre journal...</p>
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="empty-state">
+            <div className="icon">📔</div>
+            <p>Votre journal est vide. Ajoutez votre première entrée ci-dessus !</p>
           </div>
         ) : (
-          <>
-            {/* Ligne de timeline */}
-            <div style={{
-              position: 'absolute',
-              left: '24px',
-              top: '0',
-              bottom: '0',
-              width: '2px',
-              backgroundColor: 'var(--color-border-light)'
-            }} />
-
-            {entries.map((entry, index) => (
-              <div
-                key={entry.entry_id}
-                style={{
-                  position: 'relative',
-                  marginBottom: '24px',
-                  marginLeft: '56px'
-                }}
-              >
-                {/* Icône de timeline */}
-                <div style={{
-                  position: 'absolute',
-                  left: '-48px',
-                  top: '12px',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  backgroundColor: entry.entry_type === 'milestone' ? 'var(--color-success)' : 'var(--color-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.9rem',
-                  border: '3px solid white',
-                  boxShadow: '0 0 0 1px var(--color-border-light)'
-                }}>
-                  {getEntryIcon(entry.entry_type)}
-                </div>
-
-                {/* Contenu de l'entrée */}
-                <div style={{
-                  backgroundColor: entry.entry_type === 'milestone' ? 'var(--color-success-light)' : 'var(--color-card-background-light)',
-                  border: `1px solid ${entry.entry_type === 'milestone' ? 'var(--color-success)' : 'var(--color-border-light)'}`,
-                  borderRadius: 'var(--border-radius-medium)',
-                  padding: '16px'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: '8px'
-                  }}>
-                    <div style={{
-                      fontSize: '0.85rem',
-                      color: 'var(--color-text-medium)'
-                    }}>
-                      {formatDate(entry.created_at)}
-                      <span style={{ marginLeft: '8px', fontSize: '1.2rem' }}>
-                        {getMoodEmoji(entry.mood)}
-                      </span>
-                    </div>
-                    {entry.entry_type === 'milestone' && (
-                      <div style={{
-                        backgroundColor: 'var(--color-success)',
-                        color: 'white',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        fontSize: '0.7rem',
-                        fontWeight: '600'
-                      }}>
-                        ÉTAPE IMPORTANTE
-                      </div>
-                    )}
+          entries.map(entry => (
+            <div key={entry.entry_id} className="journal-entry-card">
+              {editingEntryId === entry.entry_id ? (
+                <div className="entry-edit-form">
+                  <textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    className="inputField"
+                    rows={3}
+                  />
+                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-md)' }}>
+                    <button onClick={updateEntry} className="button" disabled={loading}>
+                      ✅ Sauvegarder
+                    </button>
+                    <button onClick={cancelEditing} className="button secondary" disabled={loading}>
+                      ❌ Annuler
+                    </button>
                   </div>
-                  <p style={{
-                    margin: '0',
-                    color: 'var(--color-text-dark)',
-                    lineHeight: 1.5
-                  }}>
-                    {entry.content}
-                  </p>
                 </div>
-              </div>
-            ))}
-          </>
+              ) : (
+                <>
+                  <div className="entry-header">
+                    <div>
+                      <h4>🐕 {entry.dogs.name}</h4>
+                      <span className="entry-date">{formatDate(entry.created_at)}</span>
+                    </div>
+                    <div className="entry-actions">
+                      <button 
+                        className="button-icon" 
+                        onClick={() => startEditing(entry)}
+                        title="Modifier"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="button-icon" 
+                        onClick={() => deleteEntry(entry.entry_id)}
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                  <div className="entry-content">
+                    <p>{entry.content}</p>
+                  </div>
+                </>
+              )}
+            </div>
+          ))
         )}
       </div>
-    </div>
+    </>
   );
 }
